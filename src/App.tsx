@@ -1,11 +1,12 @@
 import React from 'react'
+import Nav from './components/Nav'
+import Classification from './components/Classification'
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <h1 className="text-3xl font-bold text-gray-900">
-        Welcome to com.grillo.apt
-      </h1>
+    <div className="min-h-screen bg-white">
+      <Nav title="APT Poker" />
+      <Classification />
     </div>
   )
 }
