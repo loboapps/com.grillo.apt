@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { useNavigate } from 'react-router-dom'
 
 type AuthMode = 'login' | 'register' | 'reset'
 
@@ -9,6 +10,7 @@ const Admin = () => {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -18,6 +20,7 @@ const Admin = () => {
       if (mode === 'login') {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
+        navigate('/')
       } 
       else if (mode === 'register') {
         const { error } = await supabase.auth.signUp({ 
