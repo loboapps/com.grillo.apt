@@ -39,8 +39,8 @@ const Nav: React.FC<NavProps> = ({ title }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsMenuOpen(false)}>
           <div className="bg-white w-64 h-full shadow-lg">
             <div className="p-4">
-              <a href="#" className="block py-2 text-gray-900 hover:text-red-600">Classificação</a>
-              <a href="#" className="block py-2 text-gray-900 hover:text-red-600">Admin</a>
+              <a href="/classificacao" className="block py-2 text-gray-900 hover:text-red-600">Classificação</a>
+              <a href="/admin" className="block py-2 text-gray-900 hover:text-red-600">Admin</a>
             </div>
           </div>
         </div>
