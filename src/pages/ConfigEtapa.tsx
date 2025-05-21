@@ -8,6 +8,7 @@ const players = [
 ]
 
 const ConfigEtapa = () => {
+  console.log('ConfigEtapa renderizando') // Debug log
   const [guests, setGuests] = useState<string[]>([])
   const [newGuest, setNewGuest] = useState('')
 
@@ -27,6 +28,7 @@ const ConfigEtapa = () => {
       
       <div className="px-4 py-6">
         <div className="space-y-4">
+          <h2 className="text-xl font-bold mb-4">Jogadores</h2>
           {players.map((player, index) => (
             <div key={index} className="flex items-center justify-between border-b pb-2">
               <span className="text-gray-900">{player}</span>
@@ -38,21 +40,31 @@ const ConfigEtapa = () => {
           ))}
 
           {guests.map((guest, index) => (
-            <div key={`guest-${index}`} className="mt-2">
+            <div key={`guest-${index}`} className="mt-2 flex items-center border-b pb-2">
               <input
                 type="text"
                 value={guest}
-                onChange={(e) => handleGuestChange(index, e.target.value)}
+                onChange={(e) => {
+                  const newGuests = [...guests]
+                  newGuests[index] = e.target.value
+                  setGuests(newGuests)
+                }}
                 placeholder="Nome do convidado"
-                className="w-full p-2 border rounded"
+                className="flex-1 p-2 border rounded"
               />
+              <button 
+                onClick={() => setGuests(guests.filter((_, i) => i !== index))}
+                className="ml-2 text-red-600"
+              >
+                ❌
+              </button>
             </div>
           ))}
         </div>
 
         <div className="mt-6 space-y-4">
           <button
-            onClick={handleAddGuest}
+            onClick={() => setGuests([...guests, ''])}
             className="w-full bg-gray-900 text-white p-3 rounded hover:bg-gray-800"
           >
             Adicionar Convidado
