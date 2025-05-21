@@ -20,16 +20,25 @@ const players = [
 const Classification = () => {
   return (
     <div className="px-4 py-6">
-      <div className="grid grid-cols-3 gap-4 font-bold text-gray-900 mb-2 border-b-2 border-red-600 pb-2">
+      <div className="grid grid-cols-3 gap-4 font-bold text-apt-900 mb-2 border-b-2 border-apt-600 pb-2">
         <div>P</div>
         <div>Nome</div>
         <div>Pontos</div>
       </div>
       {players.map((player) => (
-        <div key={player.pos} className="grid grid-cols-3 gap-4 py-2 border-b border-gray-200">
-          <div className="text-red-600">{player.pos}</div>
-          <div className="text-gray-900">{player.name}</div>
-          <div className="text-gray-900">{player.points}</div>
+        <div 
+          key={player.pos} 
+          className={`grid grid-cols-3 gap-4 py-2 border-b border-apt-200 ${
+            player.pos === 1 
+              ? 'bg-apt-600 text-apt-900' 
+              : player.pos <= 6 
+                ? 'bg-apt-500 text-apt-100'
+                : ''
+          }`}
+        ></div>
+          <div className={player.pos <= 6 ? '' : 'text-apt-600'}>{player.pos}</div>
+          <div className={player.pos <= 6 ? '' : 'text-apt-900'}>{player.name}</div>
+          <div className={player.pos <= 6 ? '' : 'text-apt-900'}>{player.points}</div>
         </div>
       ))}
     </div>
