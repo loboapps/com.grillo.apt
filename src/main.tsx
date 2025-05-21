@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App'
 import Admin from './pages/admin'
+import ConfigEtapa from './pages/ConfigEtapa'
 import './index.css'
 import { AuthProvider } from './contexts/AuthContext'
 
@@ -13,7 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="/config-etapa" element={<div>Config Etapa</div>} />
+          <Route path="/config-etapa" element={<ConfigEtapa />} />
           <Route path="/gerenciar-etapa" element={<div>Gerenciar Etapa</div>} />
           <Route path="/cadastrar-usuarios" element={<div>Cadastrar Usuários</div>} />
         </Routes>
