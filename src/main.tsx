@@ -17,7 +17,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/admin" element={<Admin />} />
           <Route path="/config-etapa" element={<ConfigEtapa />} />
           <Route path="/gerenciar-etapa" element={<GerenciarEtapa />} />
-          <Route path="/cadastrar-usuarios" element={<div>Cadastrar Usuários</div>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

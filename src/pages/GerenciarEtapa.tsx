@@ -23,7 +23,7 @@ const GerenciarEtapa = () => {
       
       <div className="px-4 py-6">
         <div className="space-y-4">
-          <h2 className="text-xl font-bold mb-4">Jogadores</h2>
+          <h2 className="text-xl font-bold mb-4">Jogadores na Etapa</h2>
           {players.map((player, index) => (
             <div key={index} className="flex items-center justify-between border-b pb-2">
               <span className="text-gray-900">{player}</span>
