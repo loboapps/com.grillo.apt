@@ -23,15 +23,15 @@ const ConfigEtapa = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-apt-100">
       <Nav title="Config Etapa" />
       
       <div className="px-4 py-6">
         <div className="space-y-4">
-          <h2 className="text-xl font-bold mb-4">Jogadores</h2>
+          <h2 className="text-xl font-bold text-apt-800 mb-4">Jogadores</h2>
           {players.map((player, index) => (
-            <div key={index} className="flex items-center border-b pb-2">
-              <span className="text-gray-900 flex-1">{player}</span>
+            <div key={index} className="flex items-center border-b border-apt-300 pb-2">
+              <span className="text-apt-800 flex-1">{player}</span>
               <div className="flex gap-2 min-w-[120px] justify-end">
                 <button className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100">
                   ☑️
@@ -69,13 +69,13 @@ const ConfigEtapa = () => {
         <div className="mt-6 space-y-4">
           <button
             onClick={() => setGuests([...guests, ''])}
-            className="w-full bg-gray-900 text-white p-3 rounded hover:bg-gray-800"
+            className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300"
           >
             Adicionar Convidado
           </button>
 
           <button
-            className="w-full bg-red-600 text-white p-3 rounded hover:bg-red-700"
+            className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300"
           >
             Sortear Mesa
           </button>

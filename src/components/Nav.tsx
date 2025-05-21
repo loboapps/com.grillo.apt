@@ -30,7 +30,7 @@ const Nav: React.FC<NavProps> = ({ title }) => {
 
   return (
     <>
-      <nav className="bg-black text-white px-4 py-3 flex items-center justify-between shadow-md">
+      <nav className="bg-apt-500 text-apt-100 px-4 py-3 flex items-center justify-between shadow-md">
         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
           <MenuIcon />
         </button>
@@ -39,18 +39,18 @@ const Nav: React.FC<NavProps> = ({ title }) => {
       </nav>
 
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsMenuOpen(false)}>
-          <div className="bg-white w-64 h-full shadow-lg">
+        <div className="fixed inset-0 bg-apt-800 bg-opacity-50" onClick={() => setIsMenuOpen(false)}>
+          <div className="bg-apt-100 w-64 h-full shadow-lg">
             <div className="p-4">
-              <Link to="/" className="block py-2 text-gray-900 hover:text-red-600">Classificação</Link>
+              <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">Classificação</Link>
               {user ? (
                 <>
-                  <Link to="/config-etapa" className="block py-2 text-gray-900 hover:text-red-600">Config etapa</Link>
-                  <Link to="/gerenciar-etapa" className="block py-2 text-gray-900 hover:text-red-600">Gerenciar etapa</Link>
-                  <Link to="/cadastrar-usuarios" className="block py-2 text-gray-900 hover:text-red-600">Cadastrar usuários</Link>
+                  <Link to="/config-etapa" className="block py-2 text-apt-800 hover:text-apt-700">Config etapa</Link>
+                  <Link to="/gerenciar-etapa" className="block py-2 text-apt-800 hover:text-apt-700">Gerenciar etapa</Link>
+                  <Link to="/cadastrar-usuarios" className="block py-2 text-apt-800 hover:text-apt-700">Cadastrar usuários</Link>
                 </>
               ) : (
-                <Link to="/admin" className="block py-2 text-gray-900 hover:text-red-600">Login</Link>
+                <Link to="/admin" className="block py-2 text-apt-800 hover:text-apt-700">Login</Link>
               )}
             </div>
           </div>
