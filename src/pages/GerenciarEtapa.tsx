@@ -7,14 +7,19 @@ const players = [
   'Leandro', 'Quadros', 'Barcímio', 'Leo'
 ]
 
+const MAX_REBUYS = 2
+
 const GerenciarEtapa = () => {
   const [rebuys, setRebuys] = useState<{ [key: string]: number }>({})
 
   const handleRebuy = (player: string) => {
-    setRebuys(prev => ({
-      ...prev,
-      [player]: (prev[player] || 0) + 1
-    }))
+    const currentRebuys = rebuys[player] || 0
+    if (currentRebuys < MAX_REBUYS) {
+      setRebuys(prev => ({
+        ...prev,
+        [player]: currentRebuys + 1
+      }))
+    }
   }
 
   return (
@@ -33,7 +38,12 @@ const GerenciarEtapa = () => {
                 </button>
                 <button 
                   onClick={() => handleRebuy(player)}
-                  className="w-[80px] h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100"
+                  disabled={(rebuys[player] || 0) >= MAX_REBUYS}
+                  className={`w-[80px] h-10 border border-black rounded flex items-center justify-center ${
+                    (rebuys[player] || 0) >= MAX_REBUYS 
+                      ? 'bg-gray-200 cursor-not-allowed opacity-50' 
+                      : 'hover:bg-gray-100'
+                  }`}
                 >
                   ♻️ x {rebuys[player] || 0}
                 </button>
