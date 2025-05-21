@@ -25,15 +25,15 @@ const GerenciarEtapa = () => {
         <div className="space-y-4">
           <h2 className="text-xl font-bold mb-4">Jogadores na Etapa</h2>
           {players.map((player, index) => (
-            <div key={index} className="flex items-center justify-between border-b pb-2">
-              <span className="text-gray-900">{player}</span>
-              <div className="space-x-2">
+            <div key={index} className="flex items-center border-b pb-2">
+              <span className="text-gray-900 flex-1">{player}</span>
+              <div className="flex gap-2 min-w-[120px] justify-end">
                 <button className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100">
                   ❌
                 </button>
                 <button 
                   onClick={() => handleRebuy(player)}
-                  className="px-3 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100 whitespace-nowrap"
+                  className="w-[80px] h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100"
                 >
                   ♻️ x {rebuys[player] || 0}
                 </button>
