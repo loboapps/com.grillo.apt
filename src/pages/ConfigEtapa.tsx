@@ -50,10 +50,10 @@ const ConfigEtapa = () => {
           ))}
 
           <div className="mt-6 space-y-4">
-            <button onClick={addGuest} className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300">
+            <button onClick={addGuest} className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900">
               Adicionar Convidado
             </button>
-            <button className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300">
+            <button className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900">
               Sortear Mesa
             </button>
           </div>

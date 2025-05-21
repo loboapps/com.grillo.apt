@@ -43,7 +43,7 @@ const GerenciarEtapa = () => {
 
         <div className="mt-6">
           <button
-            className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300"
+            className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900"
           >
             Gerenciar Financeiro
           </button>
