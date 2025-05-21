@@ -27,8 +27,8 @@ const Classification = () => {
       </div>
       {players.map((player) => {
         const getRowStyle = () => {
-          if (player.pos === 1) return 'bg-apt-500 text-apt-900'
-          if (player.pos <= 6) return 'bg-apt-400 text-apt-100'
+          if (player.pos === 1) return 'bg-apt-400 text-apt-100'
+          if (player.pos <= 6) return 'bg-apt-300 text-apt-100'
           return ''
         }
 
