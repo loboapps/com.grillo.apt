@@ -1,6 +1,7 @@
 import React from 'react'
 import Nav from '../components/Nav'
 import { useGuests } from '../hooks/useGuests'
+import { useNavigate } from 'react-router-dom'
 
 const players = [
   'Pietro', 'Chico', 'Binho', 'Marcelo', 'João',
@@ -9,7 +10,17 @@ const players = [
 ]
 
 const ConfigEtapa = () => {
+  const navigate = useNavigate()
   const { guests, addGuest, updateGuest, removeGuest } = useGuests()
+  
+  const handleSortearMesas = () => {
+    navigate('/mesas', { 
+      state: { 
+        members: players,
+        guests: guests.filter(g => g.trim() !== '')
+      } 
+    })
+  }
 
   return (
     <div className="min-h-screen bg-apt-100">
@@ -53,7 +64,10 @@ const ConfigEtapa = () => {
             <button onClick={addGuest} className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900">
               Adicionar Convidado
             </button>
-            <button className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900">
+            <button
+              onClick={handleSortearMesas}
+              className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900"
+            >
               Sortear Mesa
             </button>
           </div>
