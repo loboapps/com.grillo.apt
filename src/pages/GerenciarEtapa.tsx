@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Nav from '../components/Nav'
+import { useRebuys } from '../hooks/useRebuys'
 
 const players = [
   'Pietro', 'Chico', 'Binho', 'Marcelo', 'João',
@@ -7,20 +8,8 @@ const players = [
   'Leandro', 'Quadros', 'Barcímio', 'Leo'
 ]
 
-const MAX_REBUYS = 2
-
 const GerenciarEtapa = () => {
-  const [rebuys, setRebuys] = useState<{ [key: string]: number }>({})
-
-  const handleRebuy = (player: string) => {
-    const currentRebuys = rebuys[player] || 0
-    if (currentRebuys < MAX_REBUYS) {
-      setRebuys(prev => ({
-        ...prev,
-        [player]: currentRebuys + 1
-      }))
-    }
-  }
+  const { rebuys, addRebuy, hasMaxRebuys } = useRebuys()
 
   return (
     <div className="min-h-screen bg-apt-100">
@@ -37,10 +26,10 @@ const GerenciarEtapa = () => {
                   ❌
                 </button>
                 <button 
-                  onClick={() => handleRebuy(player)}
-                  disabled={(rebuys[player] || 0) >= MAX_REBUYS}
+                  onClick={() => addRebuy(player)}
+                  disabled={hasMaxRebuys(player)}
                   className={`w-[80px] h-10 border border-black rounded flex items-center justify-center ${
-                    (rebuys[player] || 0) >= MAX_REBUYS 
+                    hasMaxRebuys(player) 
                       ? 'bg-gray-200 cursor-not-allowed opacity-50' 
                       : 'hover:bg-gray-100'
                   }`}

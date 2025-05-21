@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Nav from '../components/Nav'
+import { useGuests } from '../hooks/useGuests'
 
 const players = [
   'Pietro', 'Chico', 'Binho', 'Marcelo', 'João',
@@ -8,24 +9,11 @@ const players = [
 ]
 
 const ConfigEtapa = () => {
-  console.log('ConfigEtapa renderizando') // Debug log
-  const [guests, setGuests] = useState<string[]>([])
-  const [newGuest, setNewGuest] = useState('')
-
-  const handleAddGuest = () => {
-    setGuests([...guests, ''])
-  }
-
-  const handleGuestChange = (index: number, value: string) => {
-    const updatedGuests = [...guests]
-    updatedGuests[index] = value
-    setGuests(updatedGuests)
-  }
+  const { guests, addGuest, updateGuest, removeGuest } = useGuests()
 
   return (
     <div className="min-h-screen bg-apt-100">
       <Nav title="Config Etapa" />
-      
       <div className="px-4 py-6">
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-apt-800 mb-4">Jogadores</h2>
@@ -42,43 +30,33 @@ const ConfigEtapa = () => {
               </div>
             </div>
           ))}
-
+          
           {guests.map((guest, index) => (
             <div key={`guest-${index}`} className="mt-2 flex items-center border-b pb-2">
               <input
                 type="text"
                 value={guest}
-                onChange={(e) => {
-                  const newGuests = [...guests]
-                  newGuests[index] = e.target.value
-                  setGuests(newGuests)
-                }}
+                onChange={(e) => updateGuest(index, e.target.value)}
                 placeholder="Nome do convidado"
                 className="flex-1 p-2 border rounded"
               />
               <button 
-                onClick={() => setGuests(guests.filter((_, i) => i !== index))}
+                onClick={() => removeGuest(index)}
                 className="ml-2 text-red-600"
               >
                 ❌
               </button>
             </div>
           ))}
-        </div>
 
-        <div className="mt-6 space-y-4">
-          <button
-            onClick={() => setGuests([...guests, ''])}
-            className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300"
-          >
-            Adicionar Convidado
-          </button>
-
-          <button
-            className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300"
-          >
-            Sortear Mesa
-          </button>
+          <div className="mt-6 space-y-4">
+            <button onClick={addGuest} className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300">
+              Adicionar Convidado
+            </button>
+            <button className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300">
+              Sortear Mesa
+            </button>
+          </div>
         </div>
       </div>
     </div>

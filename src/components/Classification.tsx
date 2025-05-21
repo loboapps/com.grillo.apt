@@ -27,8 +27,8 @@ const Classification = () => {
       </div>
       {players.map((player) => {
         const getRowStyle = () => {
-          if (player.pos === 1) return 'bg-apt-600 text-apt-900'
-          if (player.pos <= 6) return 'bg-apt-500 text-apt-100'
+          if (player.pos === 1) return 'bg-apt-500 text-apt-900'
+          if (player.pos <= 6) return 'bg-apt-400 text-apt-100'
           return ''
         }
 
@@ -37,7 +37,7 @@ const Classification = () => {
             key={player.pos} 
             className={`grid grid-cols-3 gap-4 py-2 border-b border-apt-200 ${getRowStyle()}`}
           >
-            <div className={player.pos > 6 ? 'text-apt-600' : ''}>{player.pos}</div>
+            <div className={player.pos > 6 ? 'text-apt-900' : ''}>{player.pos}</div>
             <div className={player.pos > 6 ? 'text-apt-900' : ''}>{player.name}</div>
             <div className={player.pos > 6 ? 'text-apt-900' : ''}>{player.points}</div>
           </div>
