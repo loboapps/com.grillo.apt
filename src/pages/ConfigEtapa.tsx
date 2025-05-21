@@ -32,9 +32,13 @@ const ConfigEtapa = () => {
           {players.map((player, index) => (
             <div key={index} className="flex items-center justify-between border-b pb-2">
               <span className="text-gray-900">{player}</span>
-              <div className="space-x-4">
-                <button className="text-2xl">☑️</button>
-                <button className="text-2xl">❌</button>
+              <div className="space-x-2">
+                <button className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100">
+                  ☑️
+                </button>
+                <button className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100">
+                  ❌
+                </button>
               </div>
             </div>
           ))}
