@@ -35,7 +35,8 @@ const Mesas = () => {
       <h2 className="text-xl font-bold text-apt-800 mb-4 text-center">Mesa {tableNumber}</h2>
       <div className="space-y-2">
         {players.map((player, index) => (
-          <div key={index} className="p-2 bg-apt-100 border border-apt-300 rounded text-apt-800">
+          <div key={index} className="p-2 bg-apt-100 border border-apt-300 rounded text-apt-800 flex items-center">
+            <span className="w-6 text-apt-600 font-bold mr-2">{index + 1}</span>
             {player}
           </div>
         ))}
