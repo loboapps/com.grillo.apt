@@ -1,13 +1,18 @@
 import React from 'react'
 import Nav from '../components/Nav'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-interface TableProps {
-  members: string[]
-  guests: string[]
-}
+const Mesas = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { members = [], guests = [] } = location.state || {}
 
-const Mesas: React.FC<TableProps> = ({ members, guests }) => {
-  const allPlayers = [...members, ...guests]
+  if (!members.length) {
+    navigate('/config-etapa')
+    return null
+  }
+
+  const allPlayers = [...members, ...guests.filter(g => g.trim() !== '')]
   const playersPerTable = Math.ceil(allPlayers.length / 2)
   const showThirdTable = allPlayers.length > 18
 

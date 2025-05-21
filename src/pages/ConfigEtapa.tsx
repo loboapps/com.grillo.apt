@@ -16,7 +16,7 @@ const ConfigEtapa = () => {
   const handleSortearMesas = () => {
     navigate('/mesas', { 
       state: { 
-        members: players,
+        members: players.filter(Boolean),
         guests: guests.filter(g => g.trim() !== '')
       } 
     })
