@@ -3,6 +3,7 @@ import Nav from '../components/Nav'
 import { useGuests } from '../hooks/useGuests'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { icons } from '../utils/icons'
 
 interface Player {
   id: string
@@ -96,21 +97,31 @@ const EtapaJogadores = () => {
                   onClick={() => handlePlayerStatus(player.id, true)}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
                     confirmedPlayers[player.id] === true 
-                      ? 'bg-apt-400 border-apt-500' 
-                      : 'border-black hover:bg-gray-100 opacity-50'
+                      ? 'bg-apt-800 border-apt-800' 
+                      : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
-                  ☑️
+                  <icons.BadgeCheck 
+                    className={confirmedPlayers[player.id] === true 
+                      ? 'text-apt-100' 
+                      : 'text-apt-800'
+                    }
+                  />
                 </button>
                 <button 
                   onClick={() => handlePlayerStatus(player.id, false)}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
                     confirmedPlayers[player.id] === false
-                      ? 'bg-apt-400 border-apt-500' 
-                      : 'border-black hover:bg-gray-100 opacity-50'
+                      ? 'bg-apt-800 border-apt-800' 
+                      : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
-                  ❌
+                  <icons.BadgeX 
+                    className={confirmedPlayers[player.id] === false 
+                      ? 'text-apt-100' 
+                      : 'text-red-500'
+                    }
+                  />
                 </button>
               </div>
             </div>
