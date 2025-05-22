@@ -15,16 +15,25 @@ const EtapaJogadores = () => {
   const navigate = useNavigate()
   const { guests, addGuest, updateGuest, removeGuest } = useGuests()
   const [players, setPlayers] = useState<Player[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchPlayers = async () => {
-      const { data, error } = await supabase.rpc('jogadores_load_data')
-      if (error) {
-        console.error('Error:', error)
-        return
-      }
-      if (data?.[0]?.jogadores_load_data) {
-        setPlayers(data[0].jogadores_load_data)
+      try {
+        const { data, error } = await supabase.rpc('jogadores_load_data')
+        console.log('Supabase response:', data) // Debug log
+
+        if (error) {
+          console.error('Error:', error)
+          return
+        }
+
+        // Direct array access since the RPC returns the array directly
+        setPlayers(data || [])
+      } catch (err) {
+        console.error('Fetch error:', err)
+      } finally {
+        setLoading(false)
       }
     }
     fetchPlayers()
@@ -37,6 +46,17 @@ const EtapaJogadores = () => {
         guests: guests.filter(g => g.trim() !== '')
       } 
     })
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-apt-100">
+        <Nav title="Jogadores" />
+        <div className="px-4 py-6">
+          <div className="text-apt-800">Carregando jogadores...</div>
+        </div>
+      </div>
+    )
   }
 
   return (
