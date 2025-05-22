@@ -25,34 +25,43 @@ const Classificacao = () => {
   }, [])
 
   return (
-    <div>
-      <Nav />
-      <div className="container mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Classificação</h1>
-        <table className="table-auto w-full">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">Nome</th>
-              <th className="px-4 py-2">Torneio</th>
-              <th className="px-4 py-2">Pontos</th>
-              <th className="px-4 py-2">Etapas</th>
-              <th className="px-4 py-2">Melhor Posição</th>
-              <th className="px-4 py-2">Ativo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {players.map((player, index) => (
-              <tr key={index}>
-                <td className="border px-4 py-2">{player.nome}</td>
-                <td className="border px-4 py-2">{player.nome_torneio}</td>
-                <td className="border px-4 py-2">{player.pontos}</td>
-                <td className="border px-4 py-2">{player.etapas}</td>
-                <td className="border px-4 py-2">{player.melhor_posicao}</td>
-                <td className="border px-4 py-2">{player.ativo ? 'Sim' : 'Não'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="min-h-screen bg-apt-100">
+      <Nav title="APT Poker" />
+      <div className="px-4 py-6">
+        <div className="grid grid-cols-4 gap-4 font-bold text-apt-900 mb-2 border-b-2 border-apt-600 pb-2">
+          <div className="ml-2">Pos</div>
+          <div>Nome</div>
+          <div className="text-center">Etapas</div>
+          <div className="text-center">Pontos</div>
+        </div>
+        {players.map((player, index) => (
+          <div 
+            key={player.nome} 
+            className={`grid grid-cols-4 gap-4 py-2 border-b border-apt-200 ${
+              index === 0 
+                ? 'bg-apt-800 text-apt-100' 
+                : index < 6 
+                  ? 'bg-apt-300 text-apt-900'
+                  : 'bg-apt-100 text-apt-900'
+            }`}
+          >
+            <div className="ml-2">
+              {index + 1}
+            </div>
+            <div>
+              {player.nome}
+            </div>
+            <div className="text-center">
+              {player.etapas}
+            </div>
+            <div className="text-center relative text-lg font-semibold">
+              {player.pontos}
+              {player.ativo && (
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-apt-300 rounded-full" />
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
