@@ -9,6 +9,7 @@ interface Player {
   nome: string
   apelido: string | null
   telefone: string | null
+  confirmado?: boolean
 }
 
 const EtapaJogadores = () => {
@@ -16,6 +17,7 @@ const EtapaJogadores = () => {
   const { guests, addGuest, updateGuest, removeGuest } = useGuests()
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
+  const [confirmedPlayers, setConfirmedPlayers] = useState<{ [key: string]: boolean }>({})
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -38,6 +40,27 @@ const EtapaJogadores = () => {
     }
     fetchPlayers()
   }, [])
+
+  const handlePlayerStatus = async (playerId: string, confirmed: boolean) => {
+    try {
+      const { data, error } = await supabase.rpc('etapa_gerenciar_jogador', {
+        p_jogador_id: playerId,
+        p_confirmado: confirmed
+      })
+
+      if (error) {
+        console.error('Error:', error)
+        return
+      }
+
+      setConfirmedPlayers(prev => ({
+        ...prev,
+        [playerId]: confirmed
+      }))
+    } catch (err) {
+      console.error('Management error:', err)
+    }
+  }
 
   const handleSortearMesas = () => {
     navigate('/config-etapa/mesas', { 
@@ -70,14 +93,22 @@ const EtapaJogadores = () => {
               <span className="text-apt-800 flex-1">{player.nome}</span>
               <div className="flex gap-2 min-w-[120px] justify-end">
                 <button 
-                  className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100"
-                  data-player-id={player.id}
+                  onClick={() => handlePlayerStatus(player.id, true)}
+                  className={`w-10 h-10 border rounded flex items-center justify-center ${
+                    confirmedPlayers[player.id] === true 
+                      ? 'bg-apt-400 border-apt-500' 
+                      : 'border-black hover:bg-gray-100 opacity-50'
+                  }`}
                 >
                   ☑️
                 </button>
                 <button 
-                  className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100"
-                  data-player-id={player.id}
+                  onClick={() => handlePlayerStatus(player.id, false)}
+                  className={`w-10 h-10 border rounded flex items-center justify-center ${
+                    confirmedPlayers[player.id] === false
+                      ? 'bg-apt-400 border-apt-500' 
+                      : 'border-black hover:bg-gray-100 opacity-50'
+                  }`}
                 >
                   ❌
                 </button>
