@@ -138,9 +138,9 @@ const EtapaJogadores = () => {
               />
               <button 
                 onClick={() => removeGuest(index)}
-                className="ml-2 text-red-600"
+                className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
               >
-                ❌
+                <icons.BadgeMinus className="text-red-500" />
               </button>
             </div>
           ))}
