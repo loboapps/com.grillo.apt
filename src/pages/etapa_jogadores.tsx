@@ -32,26 +32,28 @@ const EtapaJogadores = () => {
         }
 
         if (data) {
-          setPlayers(data)
+          // Filter out guests from players list
+          const regularPlayers = data.filter(p => p.id !== null)
+          setPlayers(regularPlayers)
           
           // Initialize confirmed players based on status
           const initialConfirmed: { [key: string]: boolean } = {}
           const initialGuests: string[] = []
           
           data.forEach(player => {
-            if (player.status === 'confirmado') {
-              initialConfirmed[player.id] = true
-            } else if (player.status === 'falta') {
-              initialConfirmed[player.id] = false
+            if (player.id) {
+              if (player.status === 'confirmado') {
+                initialConfirmed[player.id] = true
+              } else if (player.status === 'falta') {
+                initialConfirmed[player.id] = false
+              }
             } else if (player.status === 'convidado') {
               initialGuests.push(player.nome)
             }
           })
           
           setConfirmedPlayers(initialConfirmed)
-          if (initialGuests.length > 0) {
-            initialGuests.forEach(guest => addGuest(guest))
-          }
+          initialGuests.forEach(guest => addGuest(guest))
         }
       } catch (err) {
         console.error('Fetch error:', err)
@@ -64,7 +66,7 @@ const EtapaJogadores = () => {
 
   const handlePlayerStatus = async (playerId: string, confirmed: boolean) => {
     try {
-      const { data, error } = await supabase.rpc('etapa_gerenciar_jogador', {
+      const { error } = await supabase.rpc('etapa_gerenciar_jogador', {
         p_jogador_id: playerId,
         p_confirmado: confirmed
       })
@@ -76,7 +78,9 @@ const EtapaJogadores = () => {
 
       setConfirmedPlayers(prev => ({
         ...prev,
-        [playerId]: confirmed
+        [playerId]: confirmed,
+        // Clear opposite status when setting new status
+        ...(confirmed ? { [playerId]: true } : { [playerId]: false })
       }))
     } catch (err) {
       console.error('Management error:', err)
@@ -178,13 +182,13 @@ const EtapaJogadores = () => {
                 <button 
                   onClick={() => handlePlayerStatus(player.id, false)}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
-                    confirmedPlayers[player.id] === false || player.status === 'falta'
+                    confirmedPlayers[player.id] === false 
                       ? 'bg-apt-800 border-apt-800' 
                       : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
                   <icons.BadgeX 
-                    className={confirmedPlayers[player.id] === false || player.status === 'falta'
+                    className={confirmedPlayers[player.id] === false
                       ? 'text-apt-100' 
                       : 'text-red-500'
                     }
