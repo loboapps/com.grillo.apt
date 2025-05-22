@@ -20,6 +20,7 @@ const EtapaJogadores = () => {
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
   const [confirmedPlayers, setConfirmedPlayers] = useState<{ [key: string]: boolean }>({})
+  const [addedGuests, setAddedGuests] = useState<{ [key: number]: boolean }>({})
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -82,12 +83,33 @@ const EtapaJogadores = () => {
     }
   }
 
+  const handleRemoveGuest = async (index: number) => {
+    const guestName = guests[index]
+    try {
+      const { error } = await supabase.rpc('etapa_gerenciar_jogador', {
+        p_jogador_id: null,
+        p_confirmado: false,
+        p_nome_convidado: guestName
+      })
+
+      if (error) {
+        console.error('Error:', error)
+        return
+      }
+
+      // Only remove from local state after successful API call
+      removeGuest(index)
+    } catch (err) {
+      console.error('Guest removal error:', err)
+    }
+  }
+
   const handleAddGuest = async (index: number) => {
     const guestName = guests[index]
     if (!guestName.trim()) return
 
     try {
-      const { data, error } = await supabase.rpc('etapa_gerenciar_jogador', {
+      const { error } = await supabase.rpc('etapa_gerenciar_jogador', {
         p_jogador_id: null,
         p_confirmado: true,
         p_nome_convidado: guestName
@@ -98,8 +120,11 @@ const EtapaJogadores = () => {
         return
       }
 
-      // Remove guest from input list after successful addition
-      removeGuest(index)
+      setAddedGuests(prev => ({
+        ...prev,
+        [index]: true
+      }))
+      // Don't remove the guest input after adding
     } catch (err) {
       console.error('Guest addition error:', err)
     }
@@ -138,13 +163,13 @@ const EtapaJogadores = () => {
                 <button 
                   onClick={() => handlePlayerStatus(player.id, true)}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
-                    confirmedPlayers[player.id] === true || player.status === 'confirmado'
+                    confirmedPlayers[player.id] === true 
                       ? 'bg-apt-800 border-apt-800' 
                       : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
                   <icons.BadgeCheck 
-                    className={confirmedPlayers[player.id] === true || player.status === 'confirmado'
+                    className={confirmedPlayers[player.id] === true
                       ? 'text-apt-100' 
                       : 'text-apt-800'
                     }
@@ -176,21 +201,24 @@ const EtapaJogadores = () => {
                 value={guest}
                 onChange={(e) => updateGuest(index, e.target.value)}
                 placeholder="Nome do convidado"
-                className="flex-1 p-2 border rounded"
+                className="flex-1 p-2 border rounded mr-2"
               />
               <div className="flex gap-2">
-                <button 
-                  onClick={() => handleAddGuest(index)}
-                  className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
-                >
-                  <icons.BadgePlus className="text-apt-800" />
-                </button>
-                <button 
-                  onClick={() => removeGuest(index)}
-                  className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
-                >
-                  <icons.BadgeMinus className="text-red-500" />
-                </button>
+                {!addedGuests[index] ? (
+                  <button 
+                    onClick={() => handleAddGuest(index)}
+                    className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
+                  >
+                    <icons.BadgePlus className="text-apt-800" />
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => handleRemoveGuest(index)}
+                    className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
+                  >
+                    <icons.BadgeMinus className="text-red-500" />
+                  </button>
+                )}
               </div>
             </div>
           ))}
