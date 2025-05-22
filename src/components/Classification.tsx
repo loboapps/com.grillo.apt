@@ -26,34 +26,34 @@ const Classification = () => {
       <div className="grid grid-cols-4 gap-4 font-bold text-apt-900 mb-2 border-b-2 border-apt-600 pb-2">
         <div className="ml-2">Pos</div>
         <div>Nome</div>
-        <div className="text-center">Pontos</div>
         <div className="text-center">Etapas</div>
+        <div className="text-center">Pontos</div>
       </div>
       {players.map((player, index) => (
         <div 
           key={player.nome} 
           className={`grid grid-cols-4 gap-4 py-2 border-b border-apt-200 ${
             index === 0 
-              ? 'bg-apt-600 text-apt-900' 
+              ? 'bg-apt-200 text-apt-900' 
               : index < 6 
-                ? 'bg-apt-500 text-apt-100'
-                : ''
+                ? 'bg-apt-700 text-apt-100'
+                : 'bg-apt-900 text-apt-100'
           }`}
         >
-          <div className={`ml-2 ${index >= 6 ? 'text-apt-600' : ''}`}>
+          <div className="ml-2">
             {index + 1}
           </div>
-          <div className={index >= 6 ? 'text-apt-900' : ''}>
+          <div>
             {player.nome}
           </div>
-          <div className={`text-center relative ${index >= 6 ? 'text-apt-900' : ''}`}>
+          <div className="text-center">
+            {player.etapas}
+          </div>
+          <div className="text-center relative text-lg font-semibold">
             {player.pontos}
             {player.ativo && (
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-apt-300 rounded-full" />
             )}
-          </div>
-          <div className={`text-center ${index >= 6 ? 'text-apt-900' : ''}`}>
-            {player.etapas}
           </div>
         </div>
       ))}
