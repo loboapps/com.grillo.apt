@@ -34,10 +34,10 @@ const Classification = () => {
           key={player.nome} 
           className={`grid grid-cols-4 gap-4 py-2 border-b border-apt-200 ${
             index === 0 
-              ? 'bg-apt-200 text-apt-900' 
+              ? 'bg-apt-800 text-apt-100' 
               : index < 6 
-                ? 'bg-apt-700 text-apt-100'
-                : 'bg-apt-900 text-apt-100'
+                ? 'bg-apt-300 text-apt-900'
+                : 'bg-apt-100 text-apt-900'
           }`}
         >
           <div className="ml-2">
