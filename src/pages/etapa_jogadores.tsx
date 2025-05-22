@@ -11,6 +11,7 @@ interface Player {
   apelido: string | null
   telefone: string | null
   confirmado?: boolean
+  status?: 'falta' | 'confirmado' | 'convidado'
 }
 
 const EtapaJogadores = () => {
@@ -24,15 +25,33 @@ const EtapaJogadores = () => {
     const fetchPlayers = async () => {
       try {
         const { data, error } = await supabase.rpc('jogadores_load_data')
-        console.log('Supabase response:', data) // Debug log
-
         if (error) {
           console.error('Error:', error)
           return
         }
 
-        // Direct array access since the RPC returns the array directly
-        setPlayers(data || [])
+        if (data) {
+          setPlayers(data)
+          
+          // Initialize confirmed players based on status
+          const initialConfirmed: { [key: string]: boolean } = {}
+          const initialGuests: string[] = []
+          
+          data.forEach(player => {
+            if (player.status === 'confirmado') {
+              initialConfirmed[player.id] = true
+            } else if (player.status === 'falta') {
+              initialConfirmed[player.id] = false
+            } else if (player.status === 'convidado') {
+              initialGuests.push(player.nome)
+            }
+          })
+          
+          setConfirmedPlayers(initialConfirmed)
+          if (initialGuests.length > 0) {
+            initialGuests.forEach(guest => addGuest(guest))
+          }
+        }
       } catch (err) {
         console.error('Fetch error:', err)
       } finally {
@@ -96,13 +115,13 @@ const EtapaJogadores = () => {
                 <button 
                   onClick={() => handlePlayerStatus(player.id, true)}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
-                    confirmedPlayers[player.id] === true 
+                    confirmedPlayers[player.id] === true || player.status === 'confirmado'
                       ? 'bg-apt-800 border-apt-800' 
                       : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
                   <icons.BadgeCheck 
-                    className={confirmedPlayers[player.id] === true 
+                    className={confirmedPlayers[player.id] === true || player.status === 'confirmado'
                       ? 'text-apt-100' 
                       : 'text-apt-800'
                     }
@@ -111,13 +130,13 @@ const EtapaJogadores = () => {
                 <button 
                   onClick={() => handlePlayerStatus(player.id, false)}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
-                    confirmedPlayers[player.id] === false
+                    confirmedPlayers[player.id] === false || player.status === 'falta'
                       ? 'bg-apt-800 border-apt-800' 
                       : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
                   <icons.BadgeX 
-                    className={confirmedPlayers[player.id] === false 
+                    className={confirmedPlayers[player.id] === false || player.status === 'falta'
                       ? 'text-apt-100' 
                       : 'text-red-500'
                     }
