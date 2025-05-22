@@ -9,12 +9,12 @@ const players = [
   'Leandro', 'Quadros', 'Barcímio', 'Leo'
 ]
 
-const ConfigEtapa = () => {
+const EtapaJogadores = () => {
   const navigate = useNavigate()
   const { guests, addGuest, updateGuest, removeGuest } = useGuests()
   
   const handleSortearMesas = () => {
-    navigate('/mesas', { 
+    navigate('/config-etapa/mesas', { 
       state: { 
         members: players.filter(Boolean),
         guests: guests.filter(g => g.trim() !== '')
@@ -24,7 +24,7 @@ const ConfigEtapa = () => {
 
   return (
     <div className="min-h-screen bg-apt-100">
-      <Nav title="Config Etapa" />
+      <Nav title="Jogadores" />
       <div className="px-4 py-6">
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-apt-800 mb-4">Jogadores</h2>
@@ -77,4 +77,4 @@ const ConfigEtapa = () => {
   )
 }
 
-export default ConfigEtapa
+export default EtapaJogadores

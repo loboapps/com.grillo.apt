@@ -26,7 +26,12 @@ interface NavProps {
 
 const Nav: React.FC<NavProps> = ({ title }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [expandedItem, setExpandedItem] = useState<string | null>(null)
   const { user } = useAuth()
+
+  const toggleSubMenu = (item: string) => {
+    setExpandedItem(expandedItem === item ? null : item)
+  }
 
   return (
     <>
@@ -38,19 +43,71 @@ const Nav: React.FC<NavProps> = ({ title }) => {
         <div className="w-8"></div>
       </nav>
 
+      {/* Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-apt-800 bg-opacity-50" onClick={() => setIsMenuOpen(false)}>
-          <div className="bg-apt-100 w-64 h-full shadow-lg">
-            <div className="p-4">
-              <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">Classificação</Link>
-              {user ? (
+        <div 
+          className="fixed inset-0 bg-apt-800 bg-opacity-50 transition-opacity duration-300"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          {/* Sliding Menu */}
+          <div 
+            className={`fixed inset-y-0 left-0 w-64 bg-apt-100 transform transition-transform duration-300 ease-in-out ${
+              isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="p-4 space-y-2">
+              <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">
+                Classificação
+              </Link>
+
+              {user && (
                 <>
-                  <Link to="/config-etapa" className="block py-2 text-apt-800 hover:text-apt-700">Config etapa</Link>
-                  <Link to="/gerenciar-etapa" className="block py-2 text-apt-800 hover:text-apt-700">Gerenciar etapa</Link>
-                  <Link to="/cadastrar-usuarios" className="block py-2 text-apt-800 hover:text-apt-700">Cadastrar usuários</Link>
+                  {/* Configurar etapa */}
+                  <div>
+                    <button 
+                      onClick={() => toggleSubMenu('config')}
+                      className="w-full text-left py-2 text-apt-800 hover:text-apt-700 flex items-center justify-between"
+                    >
+                      <span>Configurar etapa</span>
+                      <span className="text-xs">{expandedItem === 'config' ? '▼' : '▶'}</span>
+                    </button>
+                    {expandedItem === 'config' && (
+                      <div className="pl-4 space-y-2">
+                        <Link to="/config-etapa/financeiro" className="block py-1 text-apt-800 hover:text-apt-700">
+                          Financeiro
+                        </Link>
+                        <Link to="/config-etapa/jogadores" className="block py-1 text-apt-800 hover:text-apt-700">
+                          Jogadores
+                        </Link>
+                        <Link to="/config-etapa/mesas" className="block py-1 text-apt-800 hover:text-apt-700">
+                          Sortear mesas
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Gerenciar etapas */}
+                  <div>
+                    <button 
+                      onClick={() => toggleSubMenu('gerenciar')}
+                      className="w-full text-left py-2 text-apt-800 hover:text-apt-700 flex items-center justify-between"
+                    >
+                      <span>Gerenciar etapas</span>
+                      <span className="text-xs">{expandedItem === 'gerenciar' ? '▼' : '▶'}</span>
+                    </button>
+                    {expandedItem === 'gerenciar' && (
+                      <div className="pl-4 space-y-2">
+                        <Link to="/gerenciar-etapa/eliminacao" className="block py-1 text-apt-800 hover:text-apt-700">
+                          Eliminação e Rebuy
+                        </Link>
+                        <Link to="/gerenciar-etapa/financeiro" className="block py-1 text-apt-800 hover:text-apt-700">
+                          Financeiro
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </>
-              ) : (
-                <Link to="/admin" className="block py-2 text-apt-800 hover:text-apt-700">Login</Link>
               )}
             </div>
           </div>
