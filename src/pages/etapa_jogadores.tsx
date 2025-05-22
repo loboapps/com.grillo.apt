@@ -1,22 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Nav from '../components/Nav'
 import { useGuests } from '../hooks/useGuests'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 
-const players = [
-  'Pietro', 'Chico', 'Binho', 'Marcelo', 'João',
-  'Geléia', 'Gean', 'Jeferson', 'Guedes', 'Matrix',
-  'Leandro', 'Quadros', 'Barcímio', 'Leo'
-]
+interface Player {
+  id: string
+  nome: string
+  apelido: string | null
+  telefone: string | null
+}
 
 const EtapaJogadores = () => {
   const navigate = useNavigate()
   const { guests, addGuest, updateGuest, removeGuest } = useGuests()
-  
+  const [players, setPlayers] = useState<Player[]>([])
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      const { data, error } = await supabase.rpc('jogadores_load_data')
+      if (error) {
+        console.error('Error:', error)
+        return
+      }
+      if (data?.[0]?.jogadores_load_data) {
+        setPlayers(data[0].jogadores_load_data)
+      }
+    }
+    fetchPlayers()
+  }, [])
+
   const handleSortearMesas = () => {
     navigate('/config-etapa/mesas', { 
       state: { 
-        members: players.filter(Boolean),
+        members: players.map(p => ({ id: p.id, nome: p.nome })),
         guests: guests.filter(g => g.trim() !== '')
       } 
     })
@@ -28,14 +45,20 @@ const EtapaJogadores = () => {
       <div className="px-4 py-6">
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-apt-800 mb-4">Jogadores</h2>
-          {players.map((player, index) => (
-            <div key={index} className="flex items-center border-b border-apt-300 pb-2">
-              <span className="text-apt-800 flex-1">{player}</span>
+          {players.map((player) => (
+            <div key={player.id} className="flex items-center border-b border-apt-300 pb-2">
+              <span className="text-apt-800 flex-1">{player.nome}</span>
               <div className="flex gap-2 min-w-[120px] justify-end">
-                <button className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100">
+                <button 
+                  className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100"
+                  data-player-id={player.id}
+                >
                   ☑️
                 </button>
-                <button className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100">
+                <button 
+                  className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100"
+                  data-player-id={player.id}
+                >
                   ❌
                 </button>
               </div>
