@@ -2,15 +2,10 @@ import React from 'react'
 import Nav from '../components/Nav'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-const Mesas = () => {
+const EtapaMesas = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { members = [], guests = [] } = location.state || {}
-
-  if (!members.length) {
-    navigate('/config-etapa')
-    return null
-  }
 
   const allPlayers = [...members, ...guests.filter(g => g.trim() !== '')]
   const playersPerTable = Math.ceil(allPlayers.length / 2)
@@ -46,7 +41,7 @@ const Mesas = () => {
 
   return (
     <div className="min-h-screen bg-apt-100">
-      <Nav title="Mesas" />
+      <Nav title="Sorteio de Mesas" />
       <div className="px-4 py-6">
         <div className="flex gap-4">
           {renderTable(table1, 1)}
@@ -61,4 +56,4 @@ const Mesas = () => {
   )
 }
 
-export default Mesas
+export default EtapaMesas
