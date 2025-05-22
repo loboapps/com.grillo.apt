@@ -16,9 +16,16 @@ const Classificacao = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data } = await supabase.rpc('classificacao_load_data')
-      if (data?.[0]?.classificacao_load_data) {
-        setPlayers(data[0].classificacao_load_data)
+      try {
+        const { data, error } = await supabase.rpc('classificacao_load_data')
+        if (error) {
+          console.error('Error:', error)
+          return
+        }
+        console.log('Supabase response:', data) // Debug log
+        setPlayers(data)
+      } catch (err) {
+        console.error('Fetch error:', err)
       }
     }
     fetchData()
