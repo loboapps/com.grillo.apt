@@ -82,6 +82,29 @@ const EtapaJogadores = () => {
     }
   }
 
+  const handleAddGuest = async (index: number) => {
+    const guestName = guests[index]
+    if (!guestName.trim()) return
+
+    try {
+      const { data, error } = await supabase.rpc('etapa_gerenciar_jogador', {
+        p_jogador_id: null,
+        p_confirmado: true,
+        p_nome_convidado: guestName
+      })
+
+      if (error) {
+        console.error('Error:', error)
+        return
+      }
+
+      // Remove guest from input list after successful addition
+      removeGuest(index)
+    } catch (err) {
+      console.error('Guest addition error:', err)
+    }
+  }
+
   const handleSortearMesas = () => {
     navigate('/config-etapa/mesas', { 
       state: { 
@@ -155,12 +178,20 @@ const EtapaJogadores = () => {
                 placeholder="Nome do convidado"
                 className="flex-1 p-2 border rounded"
               />
-              <button 
-                onClick={() => removeGuest(index)}
-                className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
-              >
-                <icons.BadgeMinus className="text-red-500" />
-              </button>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => handleAddGuest(index)}
+                  className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
+                >
+                  <icons.BadgePlus className="text-apt-800" />
+                </button>
+                <button 
+                  onClick={() => removeGuest(index)}
+                  className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
+                >
+                  <icons.BadgeMinus className="text-red-500" />
+                </button>
+              </div>
             </div>
           ))}
 
