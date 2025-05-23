@@ -1,81 +1,80 @@
 import React, { useState, useEffect } from 'react'
 import Nav from '../components/Nav'
 import SubNav from '../components/SubNav'
+import { supabase } from '../lib/supabase'
 
-interface FinancialConfig {
-  buyin: { quantity: number; value: number }
-  rebuy: { quantity: number; value: number }
-  addon: { quantity: number; value: number }
-  presidente: number
-  vicePresidente: number
-  dealer: { quantity: number; value: number }
-  local: number
-  mesaFinal: number
-  campeaoTorneio: number
+interface EtapaConfig {
+  etapa: string
+  data: string
+  inicio: string | null
+  fim: string | null
+  fn_presidente_value: number
+  fn_vice_value: number
+  dealer_value: number
+  local_value: number
+  mesa_final_value: number
+  season1st_value: number
+}
+
+interface FinancialData {
+  torneio: string
+  dados: {
+    numero_buyins: number
+    valor_buyins: number
+    numero_rebuys: number
+    valor_rebuys: number
+    numero_addons: number
+    valor_addons: number
+  }
+  etapas: EtapaConfig[]
 }
 
 const ConfiguracaoFinanceiro = () => {
-  const [config, setConfig] = useState<FinancialConfig>({
-    buyin: { quantity: 1, value: 120 },
-    rebuy: { quantity: 2, value: 100 },
-    addon: { quantity: 0, value: 0 },
-    presidente: 120,
-    vicePresidente: 0,
-    dealer: { quantity: 1, value: 200 },
-    local: 160,
-    mesaFinal: 80,
-    campeaoTorneio: 40
-  })
-  const [totalFixedCosts, setTotalFixedCosts] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState<FinancialData | null>(null)
+  const [selectedEtapa, setSelectedEtapa] = useState<EtapaConfig | null>(null)
 
   useEffect(() => {
-    const total =
-      config.presidente +
-      config.vicePresidente +
-      config.dealer.quantity * config.dealer.value +
-      config.local +
-      config.mesaFinal +
-      config.campeaoTorneio
+    const fetchData = async () => {
+      const { data: response, error } = await supabase.rpc('configfinanceiro_load_data')
+      if (error) {
+        console.error('Error:', error)
+        return
+      }
 
-    setTotalFixedCosts(total)
-  }, [config])
+      if (response?.[0]?.configfinanceiro_load_data?.[0]) {
+        const financialData = response[0].configfinanceiro_load_data[0]
+        setData(financialData)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    // TODO: Implement save functionality
-    console.log('Financial config:', config)
+        // Find first active or pending etapa
+        const activeEtapa = financialData.etapas.find(e => e.inicio && !e.fim) 
+          || financialData.etapas.find(e => !e.inicio && !e.fim)
+        
+        setSelectedEtapa(activeEtapa || null)
+      }
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
+
+  const formatDateTime = (dateTime: string | null) => {
+    if (!dateTime) return ''
+    return new Date(dateTime).toLocaleString('pt-BR')
   }
 
-  const renderQuantitySelect = (
-    value: number,
-    onChange: (value: number) => void
-  ) => (
-    <select
-      value={value}
-      onChange={(e) => onChange(Number(e.target.value))}
-      className="w-20 p-2 border rounded bg-white text-apt-800"
-    >
-      {[1, 2, 3, 4, 5].map((num) => (
-        <option key={num} value={num}>
-          {num}
-        </option>
-      ))}
-    </select>
-  )
-
-  const renderValueInput = (
-    value: number,
-    onChange: (value: number) => void
-  ) => (
-    <div className="flex items-center">
-      <span className="mr-2">R$</span>
-      <input
-        type="number"
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-24 p-2 border rounded"
-        step="0.01"
-      />
+  const renderValueInput = (label: string, value: number) => (
+    <div className="flex items-center justify-between">
+      <span className="text-apt-800">{label}</span>
+      <div className="flex items-center">
+        <span className="mr-2">R$</span>
+        <input
+          type="number"
+          value={value}
+          className="w-24 p-2 border rounded"
+          step="0.01"
+        />
+      </div>
     </div>
   )
 
@@ -92,123 +91,91 @@ const ConfiguracaoFinanceiro = () => {
     </div>
   )
 
+  if (loading) return <div>Carregando...</div>
+  if (!data) return <div>Nenhum dado encontrado</div>
+
+  const isEtapaEditable = selectedEtapa && !selectedEtapa.fim
+
   return (
     <div className="min-h-screen bg-apt-100">
       <Nav title="Configurar etapa" />
       <SubNav title="Financeiro" />
-      <form onSubmit={handleSubmit} className="px-4 py-6">
+      <div className="px-4 py-6">
         <div className="space-y-4">
           {renderSection('Etapa')}
           
-          {renderSection('Jogadores')}
-          
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-apt-800">Buy-in</span>
-                {renderQuantitySelect(config.buyin.quantity, (value) =>
-                  setConfig({ ...config, buyin: { ...config.buyin, quantity: value } })
-                )}
-              </div>
-              {renderValueInput(config.buyin.value, (value) =>
-                setConfig({ ...config, buyin: { ...config.buyin, value } })
-              )}
-            </div>
+            <select 
+              value={selectedEtapa?.etapa || ''}
+              onChange={(e) => {
+                const etapa = data.etapas.find(et => et.etapa === e.target.value)
+                setSelectedEtapa(etapa || null)
+              }}
+              className="w-full p-2 border rounded"
+            >
+              {data.etapas.map(etapa => (
+                <option key={etapa.etapa} value={etapa.etapa}>
+                  {etapa.etapa}
+                </option>
+              ))}
+            </select>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-apt-800">Rebuy</span>
-                {renderQuantitySelect(config.rebuy.quantity, (value) =>
-                  setConfig({ ...config, rebuy: { ...config.rebuy, quantity: value } })
+            {selectedEtapa?.inicio && (
+              <div className="text-apt-800">
+                <div>Início: {formatDateTime(selectedEtapa.inicio)}</div>
+                {selectedEtapa.fim && (
+                  <div>Fim: {formatDateTime(selectedEtapa.fim)}</div>
                 )}
               </div>
-              {renderValueInput(config.rebuy.value, (value) =>
-                setConfig({ ...config, rebuy: { ...config.rebuy, value } })
-              )}
-            </div>
+            )}
+          </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-apt-800">Add-on</span>
-                {renderQuantitySelect(config.addon.quantity, (value) =>
-                  setConfig({ ...config, addon: { ...config.addon, quantity: value } })
-                )}
-              </div>
-              {renderValueInput(config.addon.value, (value) =>
-                setConfig({ ...config, addon: { ...config.addon, value } })
-              )}
-            </div>
+          {renderSection('Entradas')}
+          
+          <div className="space-y-4 text-apt-800">
+            <div>Buy-in: {data.dados.numero_buyins}x R$ {data.dados.valor_buyins.toFixed(2)}</div>
+            <div>Re-buy: {data.dados.numero_rebuys}x R$ {data.dados.valor_rebuys.toFixed(2)}</div>
+            <div>Add-on: {data.dados.numero_addons}x R$ {data.dados.valor_addons.toFixed(2)}</div>
           </div>
 
           {renderSection('Custos fixos')}
           
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-apt-800">Presidente</span>
-              {renderValueInput(config.presidente, (value) =>
-                setConfig({ ...config, presidente: value })
-              )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-apt-800">Vice-presidente</span>
-              {renderValueInput(config.vicePresidente, (value) =>
-                setConfig({ ...config, vicePresidente: value })
-              )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-apt-800">Dealer</span>
-                {renderQuantitySelect(config.dealer.quantity, (value) =>
-                  setConfig({ ...config, dealer: { ...config.dealer, quantity: value } })
-                )}
+            {isEtapaEditable ? (
+              // Editable fields
+              <>
+                {renderValueInput('Presidente', selectedEtapa.fn_presidente_value)}
+                {renderValueInput('Vice-presidente', selectedEtapa.fn_vice_value)}
+                {renderValueInput('Dealer', selectedEtapa.dealer_value)}
+                {renderValueInput('Local', selectedEtapa.local_value)}
+                {renderValueInput('Mesa final', selectedEtapa.mesa_final_value)}
+                {renderValueInput('Campeão torneio', selectedEtapa.season1st_value)}
+              </>
+            ) : (
+              // Read-only fields
+              <div className="space-y-2 text-apt-800">
+                <div>Presidente: R$ {selectedEtapa?.fn_presidente_value.toFixed(2)}</div>
+                <div>Vice-presidente: R$ {selectedEtapa?.fn_vice_value.toFixed(2)}</div>
+                <div>Dealer: R$ {selectedEtapa?.dealer_value.toFixed(2)}</div>
+                <div>Local: R$ {selectedEtapa?.local_value.toFixed(2)}</div>
+                <div>Mesa final: R$ {selectedEtapa?.mesa_final_value.toFixed(2)}</div>
+                <div>Campeão torneio: R$ {selectedEtapa?.season1st_value.toFixed(2)}</div>
               </div>
-              {renderValueInput(config.dealer.value, (value) =>
-                setConfig({ ...config, dealer: { ...config.dealer, value } })
-              )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-apt-800">Local</span>
-              {renderValueInput(config.local, (value) =>
-                setConfig({ ...config, local: value })
-              )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-apt-800">Mesa final</span>
-              {renderValueInput(config.mesaFinal, (value) =>
-                setConfig({ ...config, mesaFinal: value })
-              )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-apt-800">Campeão torneio</span>
-              {renderValueInput(config.campeaoTorneio, (value) =>
-                setConfig({ ...config, campeaoTorneio: value })
-              )}
-            </div>
+            )}
           </div>
 
-          <div className="flex items-center justify-between mt-8 pt-4 border-t border-apt-300">
-            <span className="text-apt-800 font-bold">TOTAL:</span>
-            <div className="flex items-center">
-              <span className="mr-2">R$</span>
-              <span className="font-bold">{totalFixedCosts.toFixed(2)}</span>
+          {isEtapaEditable && (
+            <div className="mt-6">
+              <button
+                type="submit"
+                className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900"
+              >
+                Confirmar
+              </button>
             </div>
-          </div>
-
-          <div className="mt-6">
-            <button
-              type="submit"
-              className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900"
-            >
-              Confirmar
-            </button>
-          </div>
+          )}
         </div>
-      </form>
+      </div>
     </div>
   )
 }
