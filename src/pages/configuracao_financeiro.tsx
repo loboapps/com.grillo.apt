@@ -78,16 +78,16 @@ const ConfiguracaoFinanceiro = () => {
         <span className="mr-2">R$</span>
         <input
           type="number"
-          value={value}
-          className="w-24 p-2 border rounded"
+          value={value.toFixed(2)}
+          className="w-24 p-2 border rounded text-right"
           step="0.01"
         />
       </div>
     </div>
   )
 
-  const renderSection = (title: string) => (
-    <div className="relative my-8">
+  const renderSection = (title: string, smallMargin?: boolean) => (
+    <div className={`relative ${smallMargin ? 'my-4' : 'my-8'}`}>
       <div className="absolute inset-0 flex items-center">
         <div className="w-full border-t border-apt-300"></div>
       </div>
@@ -108,9 +108,9 @@ const ConfiguracaoFinanceiro = () => {
     <div className="min-h-screen bg-apt-100">
       <Nav title="Configurar etapa" />
       <SubNav title="Financeiro" />
-      <div className="px-4 py-6">
+      <div className="px-4 pt-2 pb-6">
         <div className="space-y-4">
-          {renderSection('Etapa')}
+          {renderSection('Etapa', true)}
           
           <div className="space-y-4">
             <select 
@@ -141,16 +141,24 @@ const ConfiguracaoFinanceiro = () => {
           {renderSection('Entradas')}
           
           <div className="space-y-4 text-apt-800">
-            <div>Buy-in: {configData.numero_buyins}x R$ {configData.valor_buyins.toFixed(2)}</div>
-            <div>Re-buy: {configData.numero_rebuys}x R$ {configData.valor_rebuys.toFixed(2)}</div>
-            <div>Add-on: {configData.numero_addons}x R$ {configData.valor_addons.toFixed(2)}</div>
+            <div className="flex justify-between items-center">
+              <span>Buy-in</span>
+              <span>{configData.numero_buyins}x R$ {configData.valor_buyins.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Re-buy</span>
+              <span>{configData.numero_rebuys}x R$ {configData.valor_rebuys.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Add-on</span>
+              <span>{configData.numero_addons}x R$ {configData.valor_addons.toFixed(2)}</span>
+            </div>
           </div>
 
           {renderSection('Custos fixos')}
           
           <div className="space-y-4">
             {isEtapaEditable ? (
-              // Editable fields
               <>
                 {renderValueInput('Presidente', selectedEtapa.fn_presidente_value)}
                 {renderValueInput('Vice-presidente', selectedEtapa.fn_vice_value)}
@@ -160,14 +168,15 @@ const ConfiguracaoFinanceiro = () => {
                 {renderValueInput('Campeão torneio', selectedEtapa.season1st_value)}
               </>
             ) : (
-              // Read-only fields
               <div className="space-y-2 text-apt-800">
-                <div>Presidente: R$ {selectedEtapa?.fn_presidente_value.toFixed(2)}</div>
-                <div>Vice-presidente: R$ {selectedEtapa?.fn_vice_value.toFixed(2)}</div>
-                <div>Dealer: R$ {selectedEtapa?.dealer_value.toFixed(2)}</div>
-                <div>Local: R$ {selectedEtapa?.local_value.toFixed(2)}</div>
-                <div>Mesa final: R$ {selectedEtapa?.mesa_final_value.toFixed(2)}</div>
-                <div>Campeão torneio: R$ {selectedEtapa?.season1st_value.toFixed(2)}</div>
+                {["Presidente", "Vice-presidente", "Dealer", "Local", "Mesa final", "Campeão torneio"].map((label, index) => (
+                  <div key={label} className="flex justify-between items-center">
+                    <span>{label}</span>
+                    <span>R$ {selectedEtapa?.[
+                      ['fn_presidente_value', 'fn_vice_value', 'dealer_value', 'local_value', 'mesa_final_value', 'season1st_value'][index]
+                    ].toFixed(2)}</span>
+                  </div>
+                ))}
               </div>
             )}
           </div>
