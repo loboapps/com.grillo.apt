@@ -77,9 +77,18 @@ const EtapaJogadores = () => {
   }
 
   const handleRemoveGuest = async (index: number) => {
-    const guestName = guests[index]
+    const guestName = confirmedGuests[index]
+    console.log('Removing guest:', {
+      guestName,
+      params: {
+        p_jogador_id: null,
+        p_confirmado: false,
+        p_nome_convidado: guestName
+      }
+    })
+
     try {
-      const { error } = await supabase.rpc('etapa_gerenciar_jogador', {
+      const { data, error } = await supabase.rpc('etapa_gerenciar_jogador', {
         p_jogador_id: null,
         p_confirmado: false,
         p_nome_convidado: guestName
@@ -90,7 +99,8 @@ const EtapaJogadores = () => {
         return
       }
 
-      removeGuest(index)
+      console.log('Remove guest response:', data)
+      setConfirmedGuests(prev => prev.filter((_, i) => i !== index))
     } catch (err) {
       console.error('Guest removal error:', err)
     }
