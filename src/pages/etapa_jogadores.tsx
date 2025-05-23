@@ -6,11 +6,10 @@ import { supabase } from '../lib/supabase'
 import { icons } from '../utils/icons'
 
 interface Player {
-  id: string
+  id: string | null
   nome: string
   apelido: string | null
   telefone: string | null
-  confirmado?: boolean
   status: 'falta' | 'confirmado' | 'convidado' | null
 }
 
@@ -27,30 +26,27 @@ const EtapaJogadores = () => {
     const fetchPlayers = async () => {
       try {
         const { data, error } = await supabase.rpc('jogadores_load_data')
-        console.log('Raw data:', data) // Debug log
+        if (error) return
 
-        if (error) {
-          console.error('Fetch error:', error)
-          return
+        if (data) {
+          // Data comes directly as an array
+          const regularPlayers = data.filter(p => p.id !== null)
+          const guestsData = data.filter(p => p.status === 'convidado')
+
+          setPlayers(regularPlayers)
+          setConfirmedGuests(guestsData.map(g => g.nome))
+          
+          // Set initial player statuses
+          const initialConfirmed = regularPlayers.reduce((acc, player) => ({
+            ...acc,
+            [player.id]: player.status === 'confirmado',
+            // If status is 'falta', explicitly set to false
+            ...(player.status === 'falta' ? { [player.id]: false } : {})
+          }), {})
+          
+          setConfirmedPlayers(initialConfirmed)
+          console.log('Initial confirmed:', initialConfirmed)
         }
-
-        // Adjust data access based on your JSON structure
-        const playersData = data?.[0]?.jogadores_load_data || []
-        
-        // Separate regular players and guests
-        const regularPlayers = playersData.filter(p => !p.status || p.status !== 'convidado')
-        const guestsData = playersData.filter(p => p.status === 'convidado')
-
-        setPlayers(regularPlayers)
-        setConfirmedGuests(guestsData.map(g => g.nome))
-        
-        // Set initial player statuses
-        const initialConfirmed = regularPlayers.reduce((acc, player) => ({
-          ...acc,
-          [player.id]: player.status === 'confirmado'
-        }), {})
-        
-        setConfirmedPlayers(initialConfirmed)
       } catch (err) {
         console.error('Fetch error:', err)
       } finally {
