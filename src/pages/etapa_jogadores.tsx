@@ -11,7 +11,7 @@ interface Player {
   apelido: string | null
   telefone: string | null
   confirmado?: boolean
-  status?: 'falta' | 'confirmado' | 'convidado'
+  status: 'falta' | 'confirmado' | 'convidado' | null
 }
 
 const EtapaJogadores = () => {
@@ -21,39 +21,28 @@ const EtapaJogadores = () => {
   const [loading, setLoading] = useState(true)
   const [confirmedPlayers, setConfirmedPlayers] = useState<{ [key: string]: boolean }>({})
   const [addedGuests, setAddedGuests] = useState<{ [key: number]: boolean }>({})
+  const [confirmedGuests, setConfirmedGuests] = useState<string[]>([])
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
         const { data, error } = await supabase.rpc('jogadores_load_data')
-        if (error) {
-          console.error('Error:', error)
-          return
-        }
+        if (error) return
 
-        if (data) {
-          // Filter out guests from players list
-          const regularPlayers = data.filter(p => p.id !== null)
+        if (data?.[0]?.classificacao_load_data) {
+          const players = data[0].classificacao_load_data
+          const guests = players.filter(p => p.status === 'convidado').map(g => g.nome)
+          const regularPlayers = players.filter(p => p.status !== 'convidado')
+
           setPlayers(regularPlayers)
+          setConfirmedGuests(guests)
           
-          // Initialize confirmed players based on status
-          const initialConfirmed: { [key: string]: boolean } = {}
-          const initialGuests: string[] = []
-          
-          data.forEach(player => {
-            if (player.id) {
-              if (player.status === 'confirmado') {
-                initialConfirmed[player.id] = true
-              } else if (player.status === 'falta') {
-                initialConfirmed[player.id] = false
-              }
-            } else if (player.status === 'convidado') {
-              initialGuests.push(player.nome)
-            }
-          })
+          const initialConfirmed = regularPlayers.reduce((acc, player) => ({
+            ...acc,
+            [player.id]: player.status === 'confirmado'
+          }), {})
           
           setConfirmedPlayers(initialConfirmed)
-          initialGuests.forEach(guest => addGuest(guest))
         }
       } catch (err) {
         console.error('Fetch error:', err)
@@ -79,7 +68,6 @@ const EtapaJogadores = () => {
       setConfirmedPlayers(prev => ({
         ...prev,
         [playerId]: confirmed,
-        // Clear opposite status when setting new status
         ...(confirmed ? { [playerId]: true } : { [playerId]: false })
       }))
     } catch (err) {
@@ -101,7 +89,6 @@ const EtapaJogadores = () => {
         return
       }
 
-      // Only remove from local state after successful API call
       removeGuest(index)
     } catch (err) {
       console.error('Guest removal error:', err)
@@ -128,7 +115,6 @@ const EtapaJogadores = () => {
         ...prev,
         [index]: true
       }))
-      // Don't remove the guest input after adding
     } catch (err) {
       console.error('Guest addition error:', err)
     }
@@ -160,6 +146,8 @@ const EtapaJogadores = () => {
       <div className="px-4 py-6">
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-apt-800 mb-4">Jogadores</h2>
+          
+          {/* Regular Players Section */}
           {players.map((player) => (
             <div key={player.id} className="flex items-center border-b border-apt-300 pb-2">
               <span className="text-apt-800 flex-1">{player.nome}</span>
@@ -197,7 +185,36 @@ const EtapaJogadores = () => {
               </div>
             </div>
           ))}
-          
+
+          {/* Confirmed Guests Section */}
+          {confirmedGuests.length > 0 && (
+            <>
+              <div className="relative my-8">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-apt-300"></div>
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-apt-100 px-4 text-sm font-medium text-apt-800">
+                    Convidados
+                  </span>
+                </div>
+              </div>
+
+              {confirmedGuests.map((guest, index) => (
+                <div key={`confirmed-guest-${index}`} className="flex items-center border-b border-apt-300 pb-2">
+                  <span className="text-apt-800 flex-1">{guest}</span>
+                  <button 
+                    onClick={() => handleRemoveGuest(index)}
+                    className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
+                  >
+                    <icons.BadgeMinus className="text-red-500" />
+                  </button>
+                </div>
+              ))}
+            </>
+          )}
+
+          {/* New Guest Input Section */}
           {guests.map((guest, index) => (
             <div key={`guest-${index}`} className="mt-2 flex items-center border-b pb-2">
               <input
@@ -227,6 +244,7 @@ const EtapaJogadores = () => {
             </div>
           ))}
 
+          {/* Action Buttons */}
           <div className="mt-6 space-y-4">
             <button onClick={addGuest} className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900">
               Adicionar Convidado
