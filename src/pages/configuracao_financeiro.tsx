@@ -36,23 +36,31 @@ const ConfiguracaoFinanceiro = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data: response, error } = await supabase.rpc('configfinanceiro_load_data')
-      if (error) {
-        console.error('Error:', error)
-        return
-      }
+      try {
+        const { data: response, error } = await supabase.rpc('configfinanceiro_load_data')
+        console.log('Raw response:', response) // Debug log
 
-      if (response?.[0]?.configfinanceiro_load_data?.[0]) {
-        const financialData = response[0].configfinanceiro_load_data[0]
-        setData(financialData)
+        if (error) {
+          console.error('Error:', error)
+          return
+        }
 
-        // Find first active or pending etapa
-        const activeEtapa = financialData.etapas.find(e => e.inicio && !e.fim) 
-          || financialData.etapas.find(e => !e.inicio && !e.fim)
-        
-        setSelectedEtapa(activeEtapa || null)
+        if (response?.[0]?.configfinanceiro_load_data) {
+          const financialData = response[0].configfinanceiro_load_data[0]
+          console.log('Parsed data:', financialData) // Debug log
+          setData(financialData)
+
+          // Find first active or pending etapa
+          const activeEtapa = financialData.etapas.find(e => e.inicio && !e.fim) 
+            || financialData.etapas.find(e => !e.inicio && !e.fim)
+          
+          setSelectedEtapa(activeEtapa || financialData.etapas[0])
+        }
+        setLoading(false)
+      } catch (err) {
+        console.error('Fetch error:', err)
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     fetchData()
