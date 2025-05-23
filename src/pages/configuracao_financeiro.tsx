@@ -17,16 +17,18 @@ interface EtapaConfig {
 }
 
 interface FinancialData {
-  nome: string
-  inicio: string
-  fim: string
-  numero_buyins: number
-  valor_buyins: number
-  numero_rebuys: number
-  valor_rebuys: number
-  numero_addons: number
-  valor_addons: number
-  etapas: EtapaConfig[]
+  configfinanceiro_load_data: [{
+    nome: string
+    inicio: string
+    fim: string
+    numero_buyins: number
+    valor_buyins: number
+    numero_rebuys: number
+    valor_rebuys: number
+    numero_addons: number
+    valor_addons: number
+    etapas: EtapaConfig[]
+  }]
 }
 
 const ConfiguracaoFinanceiro = () => {
@@ -38,17 +40,15 @@ const ConfiguracaoFinanceiro = () => {
     const fetchData = async () => {
       try {
         const { data: response, error } = await supabase.rpc('configfinanceiro_load_data')
-        console.log('Raw response:', response)
-
+        
         if (error) {
           console.error('Error:', error)
           return
         }
 
-        if (response?.[0]?.configfinanceiro_load_data?.[0]) {
+        if (response?.[0]) {
+          setData(response[0])
           const financialData = response[0].configfinanceiro_load_data[0]
-          setData(financialData)
-
           const activeEtapa = financialData.etapas.find(e => e.inicio && !e.fim) 
             || financialData.etapas.find(e => !e.inicio && !e.fim)
           
@@ -114,12 +114,12 @@ const ConfiguracaoFinanceiro = () => {
             <select 
               value={selectedEtapa?.etapa || ''}
               onChange={(e) => {
-                const etapa = data.etapas.find(et => et.etapa === e.target.value)
+                const etapa = data?.configfinanceiro_load_data[0].etapas.find(et => et.etapa === e.target.value)
                 setSelectedEtapa(etapa || null)
               }}
               className="w-full p-2 border rounded"
             >
-              {data.etapas.map(etapa => (
+              {data?.configfinanceiro_load_data[0].etapas.map(etapa => (
                 <option key={etapa.etapa} value={etapa.etapa}>
                   {etapa.etapa}
                 </option>
@@ -139,9 +139,9 @@ const ConfiguracaoFinanceiro = () => {
           {renderSection('Entradas')}
           
           <div className="space-y-4 text-apt-800">
-            <div>Buy-in: {data.numero_buyins}x R$ {data.valor_buyins.toFixed(2)}</div>
-            <div>Re-buy: {data.numero_rebuys}x R$ {data.valor_rebuys.toFixed(2)}</div>
-            <div>Add-on: {data.numero_addons}x R$ {data.valor_addons.toFixed(2)}</div>
+            <div>Buy-in: {data?.configfinanceiro_load_data[0].numero_buyins}x R$ {data?.configfinanceiro_load_data[0].valor_buyins.toFixed(2)}</div>
+            <div>Re-buy: {data?.configfinanceiro_load_data[0].numero_rebuys}x R$ {data?.configfinanceiro_load_data[0].valor_rebuys.toFixed(2)}</div>
+            <div>Add-on: {data?.configfinanceiro_load_data[0].numero_addons}x R$ {data?.configfinanceiro_load_data[0].valor_addons.toFixed(2)}</div>
           </div>
 
           {renderSection('Custos fixos')}
