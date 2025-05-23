@@ -136,6 +136,19 @@ const EtapaJogadores = () => {
     })
   }
 
+  const renderSection = (title: string, smallMargin?: boolean) => (
+    <div className={`relative ${smallMargin ? 'my-4' : 'my-8'}`}>
+      <div className="absolute inset-0 flex items-center z-0">
+        <div className="w-full border-t border-apt-300"></div>
+      </div>
+      <div className="relative flex justify-center z-0">
+        <span className="bg-apt-100 px-4 text-sm font-medium text-apt-800 uppercase tracking-widest">
+          {title}
+        </span>
+      </div>
+    </div>
+  )
+
   if (loading) {
     return (
       <div className="min-h-screen bg-apt-100">
@@ -158,10 +171,8 @@ const EtapaJogadores = () => {
       )}
       <Nav title="Configurar etapa" />
       <SubNav title="Jogadores" />
-      <div className="px-4 py-6">
+      <div className="px-4 pt-2 pb-6">
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-apt-800 mb-4">Jogadores</h2>
-          
           {/* Regular Players Section */}
           {players.map((player, index) => (
             <div key={player.id} className={`flex items-center ${
@@ -206,17 +217,7 @@ const EtapaJogadores = () => {
           {/* Confirmed Guests Section */}
           {confirmedGuests.length > 0 && (
             <>
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-apt-300"></div>
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-apt-100 px-4 text-sm font-medium text-apt-800">
-                    Convidados
-                  </span>
-                </div>
-              </div>
-
+              {renderSection('Convidados')}
               {confirmedGuests.map((guest, index) => (
                 <div key={`confirmed-guest-${index}`} className="flex items-center border-b border-apt-300 pb-2">
                   <span className="text-apt-800 flex-1">{guest}</span>
