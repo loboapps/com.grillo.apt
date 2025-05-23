@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Nav from '../components/Nav'
+import Toast from '../components/Toast'
 import { useGuests } from '../hooks/useGuests'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
@@ -21,6 +22,7 @@ const EtapaJogadores = () => {
   const [confirmedPlayers, setConfirmedPlayers] = useState<{ [key: string]: boolean }>({})
   const [addedGuests, setAddedGuests] = useState<{ [key: number]: boolean }>({})
   const [confirmedGuests, setConfirmedGuests] = useState<string[]>([])
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -78,15 +80,6 @@ const EtapaJogadores = () => {
 
   const handleRemoveGuest = async (index: number) => {
     const guestName = confirmedGuests[index]
-    console.log('Removing guest:', {
-      guestName,
-      params: {
-        p_jogador_id: null,
-        p_confirmado: false,
-        p_nome_convidado: guestName
-      }
-    })
-
     try {
       const { data, error } = await supabase.rpc('etapa_gerenciar_jogador', {
         p_jogador_id: null,
@@ -99,8 +92,12 @@ const EtapaJogadores = () => {
         return
       }
 
-      console.log('Remove guest response:', data)
-      setConfirmedGuests(prev => prev.filter((_, i) => i !== index))
+      if (data?.status === 'removido') {
+        setToast({ message: 'Convidado removido com sucesso', type: 'success' })
+        setConfirmedGuests(prev => prev.filter((_, i) => i !== index))
+      } else if (data?.status === 'nao_encontrado_para_remocao') {
+        setToast({ message: 'Convidado não encontrado', type: 'error' })
+      }
     } catch (err) {
       console.error('Guest removal error:', err)
     }
@@ -122,10 +119,8 @@ const EtapaJogadores = () => {
         return
       }
 
-      setAddedGuests(prev => ({
-        ...prev,
-        [index]: true
-      }))
+      setConfirmedGuests(prev => [...prev, guestName])
+      removeGuest(index)
     } catch (err) {
       console.error('Guest addition error:', err)
     }
@@ -153,14 +148,23 @@ const EtapaJogadores = () => {
 
   return (
     <div className="min-h-screen bg-apt-100">
-      <Nav title="Jogadores" />
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
+      <Nav title="Configuração Etapa" />
       <div className="px-4 py-6">
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-apt-800 mb-4">Jogadores</h2>
           
           {/* Regular Players Section */}
-          {players.map((player) => (
-            <div key={player.id} className="flex items-center border-b border-apt-300 pb-2">
+          {players.map((player, index) => (
+            <div key={player.id} className={`flex items-center ${
+              index < players.length - 1 ? 'border-b' : ''
+            } border-apt-300 pb-2`}>
               <span className="text-apt-800 flex-1">{player.nome}</span>
               <div className="flex gap-2 min-w-[120px] justify-end">
                 <button 
