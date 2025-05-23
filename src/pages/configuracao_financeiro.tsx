@@ -40,19 +40,27 @@ const ConfiguracaoFinanceiro = () => {
     const fetchData = async () => {
       try {
         const { data: response, error } = await supabase.rpc('configfinanceiro_load_data')
-        
+        console.log('Raw response:', response)
+
         if (error) {
           console.error('Error:', error)
           return
         }
 
-        if (response?.[0]) {
-          setData(response[0])
-          const financialData = response[0].configfinanceiro_load_data[0]
-          const activeEtapa = financialData.etapas.find(e => e.inicio && !e.fim) 
-            || financialData.etapas.find(e => !e.inicio && !e.fim)
+        if (response && Array.isArray(response) && response.length > 0) {
+          const financialData = response[0]
+          console.log('Financial data:', financialData)
           
-          setSelectedEtapa(activeEtapa || financialData.etapas[0])
+          if (financialData?.configfinanceiro_load_data?.[0]) {
+            const data = financialData.configfinanceiro_load_data[0]
+            console.log('Parsed data:', data)
+            
+            setData(financialData)
+            const activeEtapa = data.etapas.find(e => e.inicio && !e.fim) 
+              || data.etapas.find(e => !e.inicio && !e.fim)
+            
+            setSelectedEtapa(activeEtapa || data.etapas[0])
+          }
         }
         setLoading(false)
       } catch (err) {
