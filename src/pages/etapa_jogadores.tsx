@@ -29,23 +29,20 @@ const EtapaJogadores = () => {
         if (error) return
 
         if (data) {
-          // Data comes directly as an array
           const regularPlayers = data.filter(p => p.id !== null)
           const guestsData = data.filter(p => p.status === 'convidado')
 
           setPlayers(regularPlayers)
           setConfirmedGuests(guestsData.map(g => g.nome))
           
-          // Set initial player statuses
+          // Only set status if it's explicitly confirmado or falta
           const initialConfirmed = regularPlayers.reduce((acc, player) => ({
             ...acc,
-            [player.id]: player.status === 'confirmado',
-            // If status is 'falta', explicitly set to false
+            ...(player.status === 'confirmado' ? { [player.id]: true } : {}),
             ...(player.status === 'falta' ? { [player.id]: false } : {})
           }), {})
           
           setConfirmedPlayers(initialConfirmed)
-          console.log('Initial confirmed:', initialConfirmed)
         }
       } catch (err) {
         console.error('Fetch error:', err)
