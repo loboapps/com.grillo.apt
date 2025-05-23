@@ -16,24 +16,26 @@ interface EtapaConfig {
   season1st_value: number
 }
 
+interface FinancialConfig {
+  nome: string
+  inicio: string
+  fim: string
+  numero_buyins: number
+  valor_buyins: number
+  numero_rebuys: number
+  valor_rebuys: number
+  numero_addons: number
+  valor_addons: number
+  etapas: EtapaConfig[]
+}
+
 interface FinancialData {
-  configfinanceiro_load_data: [{
-    nome: string
-    inicio: string
-    fim: string
-    numero_buyins: number
-    valor_buyins: number
-    numero_rebuys: number
-    valor_rebuys: number
-    numero_addons: number
-    valor_addons: number
-    etapas: EtapaConfig[]
-  }]
+  configfinanceiro_load_data: FinancialConfig[]
 }
 
 const ConfiguracaoFinanceiro = () => {
   const [loading, setLoading] = useState(true)
-  const [data, setData] = useState<FinancialData | null>(null)
+  const [configData, setConfigData] = useState<FinancialConfig | null>(null)
   const [selectedEtapa, setSelectedEtapa] = useState<EtapaConfig | null>(null)
 
   useEffect(() => {
@@ -47,24 +49,22 @@ const ConfiguracaoFinanceiro = () => {
           return
         }
 
-        if (response && Array.isArray(response) && response.length > 0) {
-          const financialData = response[0]
-          console.log('Financial data:', financialData)
+        // Safely access nested data
+        const config = response?.[0]?.configfinanceiro_load_data?.[0]
+        if (config) {
+          console.log('Config data:', config)
+          setConfigData(config)
           
-          if (financialData?.configfinanceiro_load_data?.[0]) {
-            const data = financialData.configfinanceiro_load_data[0]
-            console.log('Parsed data:', data)
-            
-            setData(financialData)
-            const activeEtapa = data.etapas.find(e => e.inicio && !e.fim) 
-              || data.etapas.find(e => !e.inicio && !e.fim)
-            
-            setSelectedEtapa(activeEtapa || data.etapas[0])
-          }
+          // Find active or pending etapa
+          const activeEtapa = config.etapas.find(e => e.inicio && !e.fim) 
+            || config.etapas.find(e => !e.inicio && !e.fim)
+          
+          setSelectedEtapa(activeEtapa || config.etapas[0])
         }
-        setLoading(false)
+        
       } catch (err) {
         console.error('Fetch error:', err)
+      } finally {
         setLoading(false)
       }
     }
@@ -106,7 +106,7 @@ const ConfiguracaoFinanceiro = () => {
   )
 
   if (loading) return <div>Carregando...</div>
-  if (!data) return <div>Nenhum dado encontrado</div>
+  if (!configData) return <div>Nenhum dado encontrado</div>
 
   const isEtapaEditable = selectedEtapa && !selectedEtapa.fim
 
@@ -122,12 +122,12 @@ const ConfiguracaoFinanceiro = () => {
             <select 
               value={selectedEtapa?.etapa || ''}
               onChange={(e) => {
-                const etapa = data?.configfinanceiro_load_data[0].etapas.find(et => et.etapa === e.target.value)
+                const etapa = configData.etapas.find(et => et.etapa === e.target.value)
                 setSelectedEtapa(etapa || null)
               }}
               className="w-full p-2 border rounded"
             >
-              {data?.configfinanceiro_load_data[0].etapas.map(etapa => (
+              {configData.etapas.map(etapa => (
                 <option key={etapa.etapa} value={etapa.etapa}>
                   {etapa.etapa}
                 </option>
@@ -147,9 +147,9 @@ const ConfiguracaoFinanceiro = () => {
           {renderSection('Entradas')}
           
           <div className="space-y-4 text-apt-800">
-            <div>Buy-in: {data?.configfinanceiro_load_data[0].numero_buyins}x R$ {data?.configfinanceiro_load_data[0].valor_buyins.toFixed(2)}</div>
-            <div>Re-buy: {data?.configfinanceiro_load_data[0].numero_rebuys}x R$ {data?.configfinanceiro_load_data[0].valor_rebuys.toFixed(2)}</div>
-            <div>Add-on: {data?.configfinanceiro_load_data[0].numero_addons}x R$ {data?.configfinanceiro_load_data[0].valor_addons.toFixed(2)}</div>
+            <div>Buy-in: {configData.numero_buyins}x R$ {configData.valor_buyins.toFixed(2)}</div>
+            <div>Re-buy: {configData.numero_rebuys}x R$ {configData.valor_rebuys.toFixed(2)}</div>
+            <div>Add-on: {configData.numero_addons}x R$ {configData.valor_addons.toFixed(2)}</div>
           </div>
 
           {renderSection('Custos fixos')}
