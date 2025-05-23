@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Nav from '../components/Nav'
+import SubNav from '../components/SubNav'
 
 interface FinancialConfig {
   buyin: { quantity: number; value: number }
@@ -25,6 +26,19 @@ const ConfiguracaoFinanceiro = () => {
     mesaFinal: 80,
     campeaoTorneio: 40
   })
+  const [totalFixedCosts, setTotalFixedCosts] = useState(0)
+
+  useEffect(() => {
+    const total =
+      config.presidente +
+      config.vicePresidente +
+      config.dealer.quantity * config.dealer.value +
+      config.local +
+      config.mesaFinal +
+      config.campeaoTorneio
+
+    setTotalFixedCosts(total)
+  }, [config])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,7 +85,7 @@ const ConfiguracaoFinanceiro = () => {
         <div className="w-full border-t border-apt-300"></div>
       </div>
       <div className="relative flex justify-center">
-        <span className="bg-apt-100 px-4 text-sm font-medium text-apt-800">
+        <span className="bg-apt-100 px-4 text-sm font-medium text-apt-800 uppercase tracking-widest">
           {title}
         </span>
       </div>
@@ -80,7 +94,8 @@ const ConfiguracaoFinanceiro = () => {
 
   return (
     <div className="min-h-screen bg-apt-100">
-      <Nav title="Configuração Financeira" />
+      <Nav title="Configurar etapa" />
+      <SubNav title="Financeiro" />
       <form onSubmit={handleSubmit} className="px-4 py-6">
         <div className="space-y-4">
           {renderSection('Etapa')}
@@ -173,6 +188,14 @@ const ConfiguracaoFinanceiro = () => {
               {renderValueInput(config.campeaoTorneio, (value) =>
                 setConfig({ ...config, campeaoTorneio: value })
               )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between mt-8 pt-4 border-t border-apt-300">
+            <span className="text-apt-800 font-bold">TOTAL:</span>
+            <div className="flex items-center">
+              <span className="mr-2">R$</span>
+              <span className="font-bold">{totalFixedCosts.toFixed(2)}</span>
             </div>
           </div>
 

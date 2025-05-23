@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Nav from '../components/Nav'
+import SubNav from '../components/SubNav'
 import Toast from '../components/Toast'
 import { useGuests } from '../hooks/useGuests'
 import { useNavigate } from 'react-router-dom'
@@ -155,7 +156,8 @@ const EtapaJogadores = () => {
           onClose={() => setToast(null)} 
         />
       )}
-      <Nav title="Configuração Etapa" />
+      <Nav title="Configurar etapa" />
+      <SubNav title="Jogadores" />
       <div className="px-4 py-6">
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-apt-800 mb-4">Jogadores</h2>
