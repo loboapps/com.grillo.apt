@@ -17,15 +17,15 @@ interface EtapaConfig {
 }
 
 interface FinancialData {
-  torneio: string
-  dados: {
-    numero_buyins: number
-    valor_buyins: number
-    numero_rebuys: number
-    valor_rebuys: number
-    numero_addons: number
-    valor_addons: number
-  }
+  nome: string
+  inicio: string
+  fim: string
+  numero_buyins: number
+  valor_buyins: number
+  numero_rebuys: number
+  valor_rebuys: number
+  numero_addons: number
+  valor_addons: number
   etapas: EtapaConfig[]
 }
 
@@ -45,12 +45,10 @@ const ConfiguracaoFinanceiro = () => {
           return
         }
 
-        if (response?.[0]) {  // Data comes directly in the first array item
-          const financialData = response[0]
-          console.log('Parsed data:', financialData)
+        if (response?.[0]?.configfinanceiro_load_data?.[0]) {
+          const financialData = response[0].configfinanceiro_load_data[0]
           setData(financialData)
 
-          // Find first active or pending etapa
           const activeEtapa = financialData.etapas.find(e => e.inicio && !e.fim) 
             || financialData.etapas.find(e => !e.inicio && !e.fim)
           
@@ -141,9 +139,9 @@ const ConfiguracaoFinanceiro = () => {
           {renderSection('Entradas')}
           
           <div className="space-y-4 text-apt-800">
-            <div>Buy-in: {data.dados.numero_buyins}x R$ {data.dados.valor_buyins.toFixed(2)}</div>
-            <div>Re-buy: {data.dados.numero_rebuys}x R$ {data.dados.valor_rebuys.toFixed(2)}</div>
-            <div>Add-on: {data.dados.numero_addons}x R$ {data.dados.valor_addons.toFixed(2)}</div>
+            <div>Buy-in: {data.numero_buyins}x R$ {data.valor_buyins.toFixed(2)}</div>
+            <div>Re-buy: {data.numero_rebuys}x R$ {data.valor_rebuys.toFixed(2)}</div>
+            <div>Add-on: {data.numero_addons}x R$ {data.valor_addons.toFixed(2)}</div>
           </div>
 
           {renderSection('Custos fixos')}
