@@ -29,10 +29,6 @@ interface FinancialConfig {
   etapas: EtapaConfig[]
 }
 
-interface FinancialData {
-  configfinanceiro_load_data: FinancialConfig[]
-}
-
 const ConfiguracaoFinanceiro = () => {
   const [loading, setLoading] = useState(true)
   const [configData, setConfigData] = useState<FinancialConfig | null>(null)
@@ -49,19 +45,17 @@ const ConfiguracaoFinanceiro = () => {
           return
         }
 
-        // Safely access nested data
-        const config = response?.[0]?.configfinanceiro_load_data?.[0]
-        if (config) {
+        // Response comes directly as array with first item containing all data
+        if (response?.[0]) {
+          const config = response[0]
           console.log('Config data:', config)
           setConfigData(config)
           
-          // Find active or pending etapa
           const activeEtapa = config.etapas.find(e => e.inicio && !e.fim) 
             || config.etapas.find(e => !e.inicio && !e.fim)
           
           setSelectedEtapa(activeEtapa || config.etapas[0])
         }
-        
       } catch (err) {
         console.error('Fetch error:', err)
       } finally {
