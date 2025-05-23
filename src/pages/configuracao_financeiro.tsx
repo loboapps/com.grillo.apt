@@ -38,16 +38,16 @@ const ConfiguracaoFinanceiro = () => {
     const fetchData = async () => {
       try {
         const { data: response, error } = await supabase.rpc('configfinanceiro_load_data')
-        console.log('Raw response:', response) // Debug log
+        console.log('Raw response:', response)
 
         if (error) {
           console.error('Error:', error)
           return
         }
 
-        if (response?.[0]?.configfinanceiro_load_data) {
-          const financialData = response[0].configfinanceiro_load_data[0]
-          console.log('Parsed data:', financialData) // Debug log
+        if (response?.[0]) {  // Data comes directly in the first array item
+          const financialData = response[0]
+          console.log('Parsed data:', financialData)
           setData(financialData)
 
           // Find first active or pending etapa
