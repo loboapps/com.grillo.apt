@@ -27,29 +27,37 @@ const EtapaJogadores = () => {
     const fetchPlayers = async () => {
       try {
         const { data, error } = await supabase.rpc('jogadores_load_data')
-        if (error) return
+        console.log('Raw data:', data) // Debug log
 
-        if (data?.[0]?.classificacao_load_data) {
-          const players = data[0].classificacao_load_data
-          const guests = players.filter(p => p.status === 'convidado').map(g => g.nome)
-          const regularPlayers = players.filter(p => p.status !== 'convidado')
-
-          setPlayers(regularPlayers)
-          setConfirmedGuests(guests)
-          
-          const initialConfirmed = regularPlayers.reduce((acc, player) => ({
-            ...acc,
-            [player.id]: player.status === 'confirmado'
-          }), {})
-          
-          setConfirmedPlayers(initialConfirmed)
+        if (error) {
+          console.error('Fetch error:', error)
+          return
         }
+
+        // Adjust data access based on your JSON structure
+        const playersData = data?.[0]?.jogadores_load_data || []
+        
+        // Separate regular players and guests
+        const regularPlayers = playersData.filter(p => !p.status || p.status !== 'convidado')
+        const guestsData = playersData.filter(p => p.status === 'convidado')
+
+        setPlayers(regularPlayers)
+        setConfirmedGuests(guestsData.map(g => g.nome))
+        
+        // Set initial player statuses
+        const initialConfirmed = regularPlayers.reduce((acc, player) => ({
+          ...acc,
+          [player.id]: player.status === 'confirmado'
+        }), {})
+        
+        setConfirmedPlayers(initialConfirmed)
       } catch (err) {
         console.error('Fetch error:', err)
       } finally {
         setLoading(false)
       }
     }
+
     fetchPlayers()
   }, [])
 
