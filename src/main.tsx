@@ -7,6 +7,7 @@ import EtapaJogadores from './pages/etapa_jogadores'
 import EtapaEliminacaoRebuy from './pages/etapa_eliminacao_rebuy'
 import Mesas from './pages/Mesas'
 import EtapaMesas from './pages/etapa_mesas'
+import ConfiguracaoFinanceiro from './pages/configuracao_financeiro'
 import './index.css'
 import { AuthProvider } from './contexts/AuthContext'
 
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/config-etapa/jogadores" element={<EtapaJogadores />} />
           <Route path="/gerenciar-etapa/eliminacao" element={<EtapaEliminacaoRebuy />} />
           <Route path="/config-etapa/mesas" element={<EtapaMesas />} />
+          <Route path="/config-etapa/financeiro" element={<ConfiguracaoFinanceiro />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
