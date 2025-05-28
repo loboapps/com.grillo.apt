@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Nav from '../components/Nav'
 import SubNav from '../components/SubNav'
+import Toast from '../components/Toast'
 import { supabase } from '../lib/supabase'
 
 interface EtapaConfig {
@@ -36,6 +37,7 @@ const ConfiguracaoFinanceiro = () => {
   const [selectedEtapa, setSelectedEtapa] = useState<EtapaConfig | null>(null)
   const [editValues, setEditValues] = useState<EtapaConfig | null>(null)
   const [saving, setSaving] = useState(false)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,7 +90,7 @@ const ConfiguracaoFinanceiro = () => {
     if (!editValues?.id) return
     setSaving(true)
     try {
-      const { error } = await supabase.rpc('configfinanceiro_confirmar', {
+      const { data, error } = await supabase.rpc('configfinanceiro_confirmar', {
         p_etapa_id: editValues.id,
         p_presidente_value: editValues.fn_presidente_value,
         p_vice_value: editValues.fn_vice_value,
@@ -98,9 +100,11 @@ const ConfiguracaoFinanceiro = () => {
         p_season1st_value: editValues.season1st_value,
       })
       if (error) {
-        alert('Erro ao salvar: ' + error.message)
+        setToast({ message: 'Erro ao salvar: ' + error.message, type: 'error' })
+      } else if (data?.success) {
+        setToast({ message: 'Configuração salva com sucesso!', type: 'success' })
       } else {
-        alert('Configuração salva com sucesso!')
+        setToast({ message: 'Não foi possível salvar a configuração.', type: 'error' })
       }
     } finally {
       setSaving(false)
@@ -143,6 +147,13 @@ const ConfiguracaoFinanceiro = () => {
 
   return (
     <div className="min-h-screen bg-apt-100">
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
       <Nav title="Configurar etapa" />
       <SubNav title="Financeiro" />
       <div className="px-4 pt-2 pb-6">
