@@ -128,7 +128,7 @@ const ConfiguracaoFinanceiro = () => {
   )
 
   const renderSection = (title: string, smallMargin?: boolean) => (
-    <div className={`relative ${smallMargin ? 'my-4' : 'my-8'}`}>
+    <div className={`relative ${smallMargin ? 'my-4' : 'my-8'} z-0`}>
       <div className="absolute inset-0 flex items-center z-0">
         <div className="w-full border-t border-apt-300"></div>
       </div>
