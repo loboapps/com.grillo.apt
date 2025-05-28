@@ -28,7 +28,7 @@ const EtapaJogadores = () => {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const { data, error } = await supabase.rpc('jogadores_load_data')
+        const { data, error } = await supabase.rpc('configetapa_jogadores_load')
         if (error) return
 
         if (data) {
