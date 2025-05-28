@@ -46,12 +46,12 @@ const Nav: React.FC<NavProps> = ({ title }) => {
       {/* Overlay */}
       {isMenuOpen && (
         <div 
-          className="fixed inset-0 bg-apt-800 bg-opacity-50 transition-opacity duration-300"
+          className="fixed inset-0 bg-apt-800 bg-opacity-50 transition-opacity duration-300 z-50"
           onClick={() => setIsMenuOpen(false)}
         >
           {/* Sliding Menu */}
           <div 
-            className={`fixed inset-y-0 left-0 w-64 bg-apt-100 transform transition-transform duration-300 ease-in-out ${
+            className={`fixed inset-y-0 left-0 w-64 bg-apt-100 transform transition-transform duration-300 ease-in-out z-50 ${
               isMenuOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
             onClick={e => e.stopPropagation()}
