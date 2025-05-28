@@ -129,10 +129,10 @@ const ConfiguracaoFinanceiro = () => {
 
   const renderSection = (title: string, smallMargin?: boolean) => (
     <div className={`relative ${smallMargin ? 'my-4' : 'my-8'}`}>
-      <div className="absolute inset-0 flex items-center"}>
+      <div className="absolute inset-0 flex items-center">
         <div className="w-full border-t border-apt-300"></div>
       </div>
-      <div className="relative flex justify-center"}>
+      <div className="relative flex justify-center">
         <span className="bg-apt-100 px-4 text-sm font-medium text-apt-800 uppercase tracking-widest">
           {title}
         </span>
