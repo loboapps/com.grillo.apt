@@ -162,20 +162,32 @@ const ConfiguracaoFinanceiro = () => {
             {renderSection('Etapa', true)}
             
             <div className="space-y-4">
-              <select 
-                value={selectedEtapa?.etapa || ''}
-                onChange={(e) => {
-                  const etapa = configData.etapas.find(et => et.etapa === e.target.value)
-                  setSelectedEtapa(etapa || null)
-                }}
-                className="w-full p-2 border rounded"
-              >
-                {configData.etapas.map(etapa => (
-                  <option key={etapa.etapa} value={etapa.etapa}>
-                    {etapa.etapa}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center gap-2">
+                <select 
+                  value={selectedEtapa?.etapa || ''}
+                  onChange={(e) => {
+                    const etapa = configData.etapas.find(et => et.etapa === e.target.value)
+                    setSelectedEtapa(etapa || null)
+                  }}
+                  className={`border rounded p-2 flex-1 min-w-0 ${!selectedEtapa?.inicio ? 'w-[calc(100%-100px)]' : 'w-full'}`}
+                  style={{ maxWidth: !selectedEtapa?.inicio ? 'calc(100% - 100px)' : '100%' }}
+                >
+                  {configData.etapas.map(etapa => (
+                    <option key={etapa.etapa} value={etapa.etapa}>
+                      {etapa.etapa}
+                    </option>
+                  ))}
+                </select>
+                {!selectedEtapa?.inicio && (
+                  <button
+                    type="button"
+                    className="w-[90px] ml-2 bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
+                    // onClick={handleIniciarEtapa} // Implemente a função se necessário
+                  >
+                    Iniciar
+                  </button>
+                )}
+              </div>
 
               {selectedEtapa?.inicio && (
                 <div className="text-apt-800">
