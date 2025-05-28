@@ -42,7 +42,7 @@ const ConfiguracaoFinanceiro = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: response, error } = await supabase.rpc('configfinanceiro_load_data')
+        const { data: response, error } = await supabase.rpc('configetapa_financeiro_load')
         console.log('Raw response:', response)
 
         if (error) {
@@ -90,7 +90,7 @@ const ConfiguracaoFinanceiro = () => {
     if (!editValues?.id) return
     setSaving(true)
     try {
-      const { data, error } = await supabase.rpc('configfinanceiro_confirmar', {
+      const { data, error } = await supabase.rpc('configetapa_financeiro_confirmar', {
         p_etapa_id: editValues.id,
         p_presidente_value: editValues.fn_presidente_value,
         p_vice_value: editValues.fn_vice_value,
@@ -128,11 +128,11 @@ const ConfiguracaoFinanceiro = () => {
   )
 
   const renderSection = (title: string, smallMargin?: boolean) => (
-    <div className={`relative ${smallMargin ? 'my-4' : 'my-8'} z-0`}>
-      <div className="absolute inset-0 flex items-center z-0">
+    <div className={`relative ${smallMargin ? 'my-4' : 'my-8'}`}>
+      <div className="absolute inset-0 flex items-center" style={{ zIndex: 0 }}>
         <div className="w-full border-t border-apt-300"></div>
       </div>
-      <div className="relative flex justify-center z-0">
+      <div className="relative flex justify-center" style={{ zIndex: 0 }}>
         <span className="bg-apt-100 px-4 text-sm font-medium text-apt-800 uppercase tracking-widest">
           {title}
         </span>
