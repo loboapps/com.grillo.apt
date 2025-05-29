@@ -86,14 +86,13 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   </Link>
                   {isAdmin && (
                     <>
-                      <div className="my-6">
-                        <div className="flex items-center justify-center">
+                      <div className="mt-2 mb-3">
+                        <div className="flex items-center justify-center" style={{ marginTop: 10 }}>
                           <div className="w-full border-t border-apt-300"></div>
-                        </div>
-                        <div className="flex justify-center">
-                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-800 uppercase tracking-widest">
-                            ADMIN
+                          <span className="mx-2 text-xs font-medium text-apt-800 uppercase tracking-widest bg-apt-100 px-2">
+                            --- ADMIN ---
                           </span>
+                          <div className="w-full border-t border-apt-300"></div>
                         </div>
                       </div>
                       <div className="mb-3 flex flex-col items-center">
