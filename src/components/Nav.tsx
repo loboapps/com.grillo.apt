@@ -138,8 +138,9 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                             }
                             
                             // Sucesso: recarrega nav_load sem navegar
-                            const { data: newNavData } = await supabase.rpc('nav_load')
-                            if (newNavData) setNavData(newNavData)
+                            const { data: newNavArr } = await supabase.rpc('nav_load')
+                            const newNav = Array.isArray(newNavArr) && newNavArr[0]?.nav_load ? newNavArr[0].nav_load : null
+                            if (newNav) setNavData(newNav)
                             setToast({
                               message: data?.mensagem || 'Configuração da etapa iniciada com sucesso',
                               type: 'success'
@@ -152,6 +153,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                       >
                         Iniciar configuração
                       </button>
+                    </>
                   )}
                 </>
               )}
