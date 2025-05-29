@@ -105,7 +105,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                         className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
                         onClick={async () => {
                           const { data, error } = await supabase.rpc('aguardando_iniciar_etapa', {
-                            etapa_id: navData.proxima_etapa_uuid
+                            p_etapa_id: navData.proxima_etapa_uuid
                           })
                           if (error || data?.sucesso === false) {
                             setToast({
