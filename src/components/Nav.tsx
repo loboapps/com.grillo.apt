@@ -102,7 +102,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                       <button
                         className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
                         onClick={async () => {
-                          await supabase.rpc('iniciar_config_etapa', {
+                          await supabase.rpc('aguardando_iniciar_etapa', {
                             p_etapa_id: navData.proxima_etapa_uuid
                           })
                           navigate(`/config-etapa/financeiro/${navData.proxima_etapa_uuid}`)
