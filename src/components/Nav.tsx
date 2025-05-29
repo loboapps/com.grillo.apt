@@ -101,31 +101,55 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                         <div className="text-apt-900 text-base text-center">{navData.proxima_etapa_nome}</div>
                         <div className="text-apt-900 text-base text-center">{navData.proxima_etapa_data}</div>
                       </div>
-                      <button
-                        className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
-                        onClick={async () => {
-                          const { data, error } = await supabase.rpc('aguardando_iniciar_etapa', {
-                            p_etapa_id: navData.proxima_etapa_uuid
-                          })
-                          if (error || data?.sucesso === false) {
-                            setToast({
-                              message: data?.mensagem || error?.message || 'Erro ao iniciar etapa',
-                              type: 'error'
-                            })
-                            return
-                          }
-                          // Sucesso: recarrega nav_load sem navegar
-                          const { data: newNavData } = await supabase.rpc('nav_load')
-                          if (newNavData) setNavData(newNavData)
-                          setToast({
-                            message: data?.mensagem || 'Configuração da etapa iniciada com sucesso',
-                            type: 'success'
-                          })
-                        }}
-                      >
-                        Iniciar configuração
-                      </button>
-                    </>
+<button
+  className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
+  onClick={async () => {
+    // Debug 1: Verificar o UUID
+    console.log('UUID que será enviado:', navData.proxima_etapa_uuid)
+    console.log('Tipo do UUID:', typeof navData.proxima_etapa_uuid)
+    console.log('UUID é válido?', navData.proxima_etapa_uuid ? 'Sim' : 'Não')
+    
+    try {
+      // Debug 2: Testar a chamada RPC
+      console.log('Iniciando chamada RPC...')
+      const { data, error } = await supabase.rpc('aguardando_iniciar_etapa', {
+        p_etapa_id: navData.proxima_etapa_uuid
+      })
+      
+      // Debug 3: Ver resposta completa
+      console.log('Resposta completa:', { data, error })
+      console.log('Error details:', error)
+      
+      if (error) {
+        console.log('Tipo do error:', error.code)
+        console.log('Mensagem do error:', error.message)
+        console.log('Details do error:', error.details)
+        console.log('Hint do error:', error.hint)
+      }
+      
+      if (error || data?.sucesso === false) {
+        setToast({
+          message: data?.mensagem || error?.message || 'Erro ao iniciar etapa',
+          type: 'error'
+        })
+        return
+      }
+      
+      // Sucesso: recarrega nav_load sem navegar
+      const { data: newNavData } = await supabase.rpc('nav_load')
+      if (newNavData) setNavData(newNavData)
+      setToast({
+        message: data?.mensagem || 'Configuração da etapa iniciada com sucesso',
+        type: 'success'
+      })
+      
+    } catch (catchError) {
+      console.log('Erro no catch:', catchError)
+    }
+  }}
+>
+  Iniciar configuração
+</button>                    </>
                   )}
                 </>
               )}
