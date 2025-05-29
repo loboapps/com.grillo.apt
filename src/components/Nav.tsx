@@ -31,6 +31,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   const [expandedItem, setExpandedItem] = useState<string | null>(null)
   const { user } = useAuth()
   const [navData, setNavData] = useState<any>(null)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -53,6 +54,15 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
 
   return (
     <>
+      {toast && (
+        <import('../components/Toast').then(({ default: Toast }) => (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        ))}
+      )}
       <nav className="bg-apt-500 text-apt-100 px-4 py-3 flex items-center justify-between shadow-md">
         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
           <MenuIcon />
@@ -102,10 +112,23 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                       <button
                         className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
                         onClick={async () => {
-                          await supabase.rpc('aguardando_iniciar_etapa', {
+                          const { data, error } = await supabase.rpc('aguardando_iniciar_etapa', {
                             p_etapa_id: navData.proxima_etapa_uuid
                           })
-                          navigate(`/config-etapa/financeiro/${navData.proxima_etapa_uuid}`)
+                          if (error || data?.sucesso === false) {
+                            setToast({
+                              message: data?.mensagem || error?.message || 'Erro ao iniciar etapa',
+                              type: 'error'
+                            })
+                            return
+                          }
+                          // Sucesso: recarrega nav_load sem navegar
+                          const { data: newNavData } = await supabase.rpc('nav_load')
+                          if (newNavData) setNavData(newNavData)
+                          setToast({
+                            message: data?.mensagem || 'Configuração da etapa iniciada com sucesso',
+                            type: 'success'
+                          })
                         }}
                       >
                         Iniciar configuração
