@@ -55,13 +55,6 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
 
   return (
     <>
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
       <nav className="bg-apt-500 text-apt-100 px-4 py-3 flex items-center justify-between shadow-md">
         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
           <MenuIcon />
@@ -112,7 +105,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                         className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
                         onClick={async () => {
                           const { data, error } = await supabase.rpc('aguardando_iniciar_etapa', {
-                            p_etapa_id: navData.proxima_etapa_uuid
+                            etapa_id: navData.proxima_etapa_uuid
                           })
                           if (error || data?.sucesso === false) {
                             setToast({
@@ -209,6 +202,14 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </>
   )
