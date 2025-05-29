@@ -38,9 +38,11 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   useEffect(() => {
     const fetchNav = async () => {
       const { data, error } = await supabase.rpc('nav_load')
-      if (data) {
-        setNavData(data)
-        if (onNavData) onNavData(data)
+      // Ajuste para acessar o objeto correto dentro do array retornado
+      const nav = Array.isArray(data) && data[0]?.nav_load ? data[0].nav_load : data
+      if (nav) {
+        setNavData(nav)
+        if (onNavData) onNavData(nav)
       }
     }
     fetchNav()
