@@ -38,8 +38,13 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   useEffect(() => {
     const fetchNav = async () => {
       const { data, error } = await supabase.rpc('nav_load')
-      // Corrige para acessar SEMPRE data[0].nav_load
-      const nav = Array.isArray(data) && data[0]?.nav_load ? data[0].nav_load : null
+      // Corrige para acessar SEMPRE data[0].nav_load, mas também trata caso data seja undefined ou vazio
+      let nav = null
+      if (Array.isArray(data) && data.length > 0 && data[0]?.nav_load) {
+        nav = data[0].nav_load
+      } else if (data?.nav_load) {
+        nav = data.nav_load
+      }
       if (nav) {
         setNavData(nav)
         if (onNavData) onNavData(nav)
