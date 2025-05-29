@@ -86,7 +86,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   </Link>
                   {isAdmin && (
                     <>
-                      <div className="my-3">
+                      <div className="my-6">
                         <div className="flex items-center justify-center">
                           <div className="w-full border-t border-apt-300"></div>
                         </div>
@@ -96,9 +96,9 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                           </span>
                         </div>
                       </div>
-                      <div className="mb-1">
-                        <div className="text-apt-900">{navData.proxima_etapa_nome}</div>
-                        <div className="text-apt-900">{navData.proxima_etapa_data}</div>
+                      <div className="mb-3 flex flex-col items-center">
+                        <div className="text-apt-900 text-base text-center">{navData.proxima_etapa_nome}</div>
+                        <div className="text-apt-900 text-base text-center">{navData.proxima_etapa_data}</div>
                       </div>
                       <button
                         className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
