@@ -74,20 +74,31 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
             }`}
             onClick={e => e.stopPropagation()}
           >
-            <div className="p-4 space-y-2">
+            <div className="p-4 space-y-1">
               {/* status: aguardando */}
               {navData?.status === 'aguardando' && (
                 <>
-                  <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">
+                  <Link to="/" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação
                   </Link>
-                  <Link to={`/financeiro/${navData.ultima_etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                  <Link to={`/financeiro/${navData.ultima_etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
                     Financeiro {navData.ultima_etapa_nome}
                   </Link>
                   {isAdmin && (
-                    <div className="mt-4">
-                      <div className="text-xs text-apt-700 mb-1">
-                        {navData.proxima_etapa_nome} - {navData.proxima_etapa_data}
+                    <>
+                      <div className="my-3">
+                        <div className="flex items-center justify-center">
+                          <div className="w-full border-t border-apt-300"></div>
+                        </div>
+                        <div className="flex justify-center">
+                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-800 uppercase tracking-widest">
+                            ADMIN
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mb-1">
+                        <div className="text-apt-900">{navData.proxima_etapa_nome}</div>
+                        <div className="text-apt-900">{navData.proxima_etapa_data}</div>
                       </div>
                       <button
                         className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
@@ -95,13 +106,12 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                           await supabase.rpc('iniciar_config_etapa', {
                             p_etapa_id: navData.proxima_etapa_uuid
                           })
-                          // Opcional: recarregar o menu ou navegar
                           navigate(`/config-etapa/financeiro/${navData.proxima_etapa_uuid}`)
                         }}
                       >
                         Iniciar configuração
                       </button>
-                    </div>
+                    </>
                   )}
                 </>
               )}
@@ -109,21 +119,31 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
               {/* status: configuracao */}
               {navData?.status === 'configuracao' && (
                 <>
-                  <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">
+                  <Link to="/" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação
                   </Link>
-                  <Link to={`/financeiro/${navData.ultima_etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                  <Link to={`/financeiro/${navData.ultima_etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
                     Financeiro {navData.ultima_etapa_nome}
                   </Link>
                   {isAdmin && (
-                    <div className="mt-4 space-y-2">
-                      <Link to={`/config-etapa/financeiro/${navData.etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                    <>
+                      <div className="my-3">
+                        <div className="flex items-center justify-center">
+                          <div className="w-full border-t border-apt-300"></div>
+                        </div>
+                        <div className="flex justify-center">
+                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-800 uppercase tracking-widest">
+                            ADMIN
+                          </span>
+                        </div>
+                      </div>
+                      <Link to={`/config-etapa/financeiro/${navData.etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
                         Financeiro
                       </Link>
-                      <Link to={`/config-etapa/jogadores/${navData.etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                      <Link to={`/config-etapa/jogadores/${navData.etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
                         Jogadores
                       </Link>
-                    </div>
+                    </>
                   )}
                 </>
               )}
@@ -131,27 +151,37 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
               {/* status: gerenciamento */}
               {navData?.status === 'gerenciamento' && (
                 <>
-                  <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">
+                  <Link to="/" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação ao vivo
                   </Link>
-                  <Link to={`/financeiro/${navData.etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                  <Link to={`/financeiro/${navData.etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
                     Financeiro {navData.etapa_nome}
                   </Link>
                   {isAdmin && (
-                    <div className="mt-4 space-y-2">
+                    <>
+                      <div className="my-3">
+                        <div className="flex items-center justify-center">
+                          <div className="w-full border-t border-apt-300"></div>
+                        </div>
+                        <div className="flex justify-center">
+                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-800 uppercase tracking-widest">
+                            ADMIN
+                          </span>
+                        </div>
+                      </div>
                       <button
-                        className="block w-full text-left py-2 text-apt-800 hover:text-apt-700"
-                        // onClick={...} // Adicionar lógica para adicionar jogador
+                        className="block w-full text-left py-1 text-apt-800 hover:text-apt-700"
+                        // onClick={...}
                       >
                         Adicionar Jogador
                       </button>
-                      <Link to="/gerenciar-etapa/eliminacao" className="block py-2 text-apt-800 hover:text-apt-700">
+                      <Link to="/gerenciar-etapa/eliminacao" className="block py-1 text-apt-800 hover:text-apt-700">
                         Rebuy e Eliminação
                       </Link>
-                      <Link to={`/gerenciar-etapa/financeiro/${navData.etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                      <Link to={`/gerenciar-etapa/financeiro/${navData.etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
                         Financeiro
                       </Link>
-                    </div>
+                    </>
                   )}
                 </>
               )}
