@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import Toast from '../components/Toast'
 
 const MenuIcon = () => (
   <svg 
@@ -55,13 +56,11 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   return (
     <>
       {toast && (
-        <import('../components/Toast').then(({ default: Toast }) => (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        ))}
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
       <nav className="bg-apt-500 text-apt-100 px-4 py-3 flex items-center justify-between shadow-md">
         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
