@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 
 const MenuIcon = () => (
   <svg 
@@ -22,16 +23,33 @@ const MenuIcon = () => (
 
 interface NavProps {
   title: string;
+  onNavData?: (navData: any) => void // callback para passar o nav_load para páginas filhas se necessário
 }
 
-const Nav: React.FC<NavProps> = ({ title }) => {
+const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [expandedItem, setExpandedItem] = useState<string | null>(null)
   const { user } = useAuth()
+  const [navData, setNavData] = useState<any>(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const fetchNav = async () => {
+      const { data, error } = await supabase.rpc('nav_load')
+      if (data) {
+        setNavData(data)
+        if (onNavData) onNavData(data)
+      }
+    }
+    fetchNav()
+  }, [onNavData])
 
   const toggleSubMenu = (item: string) => {
     setExpandedItem(expandedItem === item ? null : item)
   }
+
+  // Helper for admin-only
+  const isAdmin = !!user
 
   return (
     <>
@@ -57,56 +75,84 @@ const Nav: React.FC<NavProps> = ({ title }) => {
             onClick={e => e.stopPropagation()}
           >
             <div className="p-4 space-y-2">
-              <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">
-                Classificação
-              </Link>
-
-              {user && (
+              {/* status: aguardando */}
+              {navData?.status === 'aguardando' && (
                 <>
-                  {/* Configurar etapa */}
-                  <div>
-                    <button 
-                      onClick={() => toggleSubMenu('config')}
-                      className="w-full text-left py-2 text-apt-800 hover:text-apt-700 flex items-center justify-between"
-                    >
-                      <span>Configurar etapa</span>
-                      <span className="text-xs">{expandedItem === 'config' ? '▼' : '▶'}</span>
-                    </button>
-                    {expandedItem === 'config' && (
-                      <div className="pl-4 space-y-2">
-                        <Link to="/config-etapa/financeiro" className="block py-1 text-apt-800 hover:text-apt-700">
-                          Financeiro
-                        </Link>
-                        <Link to="/config-etapa/jogadores" className="block py-1 text-apt-800 hover:text-apt-700">
-                          Jogadores
-                        </Link>
-                        <Link to="/config-etapa/mesas" className="block py-1 text-apt-800 hover:text-apt-700">
-                          Sortear mesas
-                        </Link>
+                  <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">
+                    Classificação
+                  </Link>
+                  <Link to={`/financeiro/${navData.ultima_etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                    Financeiro {navData.ultima_etapa_nome}
+                  </Link>
+                  {isAdmin && (
+                    <div className="mt-4">
+                      <div className="text-xs text-apt-700 mb-1">
+                        {navData.proxima_etapa_nome} - {navData.proxima_etapa_data}
                       </div>
-                    )}
-                  </div>
+                      <button
+                        className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
+                        onClick={async () => {
+                          await supabase.rpc('iniciar_config_etapa', {
+                            p_etapa_id: navData.proxima_etapa_uuid
+                          })
+                          // Opcional: recarregar o menu ou navegar
+                          navigate(`/config-etapa/financeiro/${navData.proxima_etapa_uuid}`)
+                        }}
+                      >
+                        Iniciar configuração
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
 
-                  {/* Gerenciar etapas */}
-                  <div>
-                    <button 
-                      onClick={() => toggleSubMenu('gerenciar')}
-                      className="w-full text-left py-2 text-apt-800 hover:text-apt-700 flex items-center justify-between"
-                    >
-                      <span>Gerenciar etapas</span>
-                      <span className="text-xs">{expandedItem === 'gerenciar' ? '▼' : '▶'}</span>
-                    </button>
-                    {expandedItem === 'gerenciar' && (
-                      <div className="pl-4 space-y-2">
-                        <Link to="/gerenciar-etapa/eliminacao" className="block py-1 text-apt-800 hover:text-apt-700">
-                          Eliminação e Rebuy
-                        </Link>
-                        <Link to="/gerenciar-etapa/financeiro" className="block py-1 text-apt-800 hover:text-apt-700">
-                          Financeiro
-                        </Link>
-                      </div>
-                    )}
-                  </div>
+              {/* status: configuracao */}
+              {navData?.status === 'configuracao' && (
+                <>
+                  <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">
+                    Classificação
+                  </Link>
+                  <Link to={`/financeiro/${navData.ultima_etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                    Financeiro {navData.ultima_etapa_nome}
+                  </Link>
+                  {isAdmin && (
+                    <div className="mt-4 space-y-2">
+                      <Link to={`/config-etapa/financeiro/${navData.etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                        Financeiro
+                      </Link>
+                      <Link to={`/config-etapa/jogadores/${navData.etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                        Jogadores
+                      </Link>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* status: gerenciamento */}
+              {navData?.status === 'gerenciamento' && (
+                <>
+                  <Link to="/" className="block py-2 text-apt-800 hover:text-apt-700">
+                    Classificação ao vivo
+                  </Link>
+                  <Link to={`/financeiro/${navData.etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                    Financeiro {navData.etapa_nome}
+                  </Link>
+                  {isAdmin && (
+                    <div className="mt-4 space-y-2">
+                      <button
+                        className="block w-full text-left py-2 text-apt-800 hover:text-apt-700"
+                        // onClick={...} // Adicionar lógica para adicionar jogador
+                      >
+                        Adicionar Jogador
+                      </button>
+                      <Link to="/gerenciar-etapa/eliminacao" className="block py-2 text-apt-800 hover:text-apt-700">
+                        Rebuy e Eliminação
+                      </Link>
+                      <Link to={`/gerenciar-etapa/financeiro/${navData.etapa_uuid}`} className="block py-2 text-apt-800 hover:text-apt-700">
+                        Financeiro
+                      </Link>
+                    </div>
+                  )}
                 </>
               )}
             </div>
