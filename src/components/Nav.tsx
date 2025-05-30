@@ -109,12 +109,16 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   </Link>
                   {isAdmin && (
                     <>
-                      <div className="mt-2 mb-3">
-                        <div className="flex items-center justify-center" style={{ marginTop: 10 }}>
+                      <div className="mt-8 mb-3">
+                        <div className="flex items-center justify-center">
                           <div className="w-full border-t border-apt-300"></div>
-                          <span className="mx-2 text-xs font-medium text-apt-800 uppercase tracking-widest bg-apt-100 px-2">
-                            --- ADMIN ---
+                        </div>
+                        <div className="flex justify-center my-2">
+                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-700 uppercase tracking-widest">
+                            ADMIN
                           </span>
+                        </div>
+                        <div className="flex items-center justify-center">
                           <div className="w-full border-t border-apt-300"></div>
                         </div>
                       </div>
@@ -156,10 +160,24 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                               return
                             }
                             
-                            // Sucesso: recarrega nav_load sem navegar
-                            const { data: newNavArr } = await supabase.rpc('nav_load')
-                            const newNav = Array.isArray(newNavArr) && newNavArr[0]?.nav_load ? newNavArr[0].nav_load : null
-                            if (newNav) setNavData(newNav)
+                            // Sucesso: recarrega nav_load
+                            const { data: newNavData } = await supabase.rpc('nav_load')
+                            let newNav = null
+                            if (Array.isArray(newNavData) && newNavData.length > 0) {
+                              if (newNavData[0]?.nav_load) {
+                                newNav = newNavData[0].nav_load
+                              } else if (newNavData[0]?.status) {
+                                newNav = newNavData[0]
+                              }
+                            } else if (newNavData?.nav_load) {
+                              newNav = newNavData.nav_load
+                            } else if (newNavData?.status) {
+                              newNav = newNavData
+                            }
+                            if (newNav) {
+                              setNavData(newNav)
+                              if (onNavData) onNavData(newNav)
+                            }
                             setToast({
                               message: data?.mensagem || 'Configuração da etapa iniciada com sucesso',
                               type: 'success'
@@ -183,25 +201,33 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   <Link to="/" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação
                   </Link>
-                  <Link to={`/financeiro/${navData.ultima_etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
-                    Financeiro {navData.ultima_etapa_nome}
-                  </Link>
                   {isAdmin && (
                     <>
-                      <div className="my-3">
+                      <div className="mt-8 mb-3">
                         <div className="flex items-center justify-center">
                           <div className="w-full border-t border-apt-300"></div>
                         </div>
-                        <div className="flex justify-center">
-                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-800 uppercase tracking-widest">
+                        <div className="flex justify-center my-2">
+                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-700 uppercase tracking-widest">
                             ADMIN
                           </span>
                         </div>
+                        <div className="flex items-center justify-center">
+                          <div className="w-full border-t border-apt-300"></div>
+                        </div>
                       </div>
-                      <Link to={`/config-etapa/financeiro/${navData.etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
+                      <Link 
+                        to="/config-etapa/financeiro" 
+                        state={{ etapaId: navData.etapa_id }}
+                        className="block py-1 text-apt-800 hover:text-apt-700"
+                      >
                         Financeiro
                       </Link>
-                      <Link to={`/config-etapa/jogadores/${navData.etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
+                      <Link 
+                        to="/config-etapa/jogadores" 
+                        state={{ etapaId: navData.etapa_id }}
+                        className="block py-1 text-apt-800 hover:text-apt-700"
+                      >
                         Jogadores
                       </Link>
                     </>
@@ -220,14 +246,17 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   </Link>
                   {isAdmin && (
                     <>
-                      <div className="my-3">
+                      <div className="mt-8 mb-3">
                         <div className="flex items-center justify-center">
                           <div className="w-full border-t border-apt-300"></div>
                         </div>
-                        <div className="flex justify-center">
-                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-800 uppercase tracking-widest">
+                        <div className="flex justify-center my-2">
+                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-700 uppercase tracking-widest">
                             ADMIN
                           </span>
+                        </div>
+                        <div className="flex items-center justify-center">
+                          <div className="w-full border-t border-apt-300"></div>
                         </div>
                       </div>
                       <button

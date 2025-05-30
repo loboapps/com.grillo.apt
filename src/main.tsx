@@ -3,10 +3,17 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App'
 import Admin from './pages/admin'
-import EtapaJogadores from './pages/configetapa_jogadores'
-import EtapaEliminacaoRebuy from './pages/etapa_eliminacao_rebuy'
-import EtapaMesas from './pages/configetapa_mesas'
+import Classificacao from './pages/classificacao'
+import Financeiro from './pages/financeiro'
+import Mesas from './pages/mesas'
+import Perfil from './pages/perfil'
+import Login from './pages/login'
 import ConfiguracaoFinanceiro from './pages/configetapa_financeiro'
+import ConfiguracaoJogadores from './pages/configetapa_jogadores'
+import ConfiguracaoSorteio from './pages/configetapa_sorteio'
+import ManageJogador from './pages/manageetapa_jogador'
+import ManageEliminacao from './pages/manageetapa_eliminacao'
+import ManageFinanceiro from './pages/manageetapa_financeiro'
 import './index.css'
 import { AuthProvider } from './contexts/AuthContext'
 
@@ -17,10 +24,21 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="/config-etapa/jogadores" element={<EtapaJogadores />} />
-          <Route path="/gerenciar-etapa/eliminacao" element={<EtapaEliminacaoRebuy />} />
-          <Route path="/config-etapa/mesas" element={<EtapaMesas />} />
-          <Route path="/config-etapa/financeiro" element={<ConfiguracaoFinanceiro />} />
+          <Route path="/classificacao" element={<Classificacao />} />
+          <Route path="/financeiro" element={<Financeiro />} />
+          <Route path="/mesas" element={<Mesas />} />
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/login" element={<Login />} />
+
+          {/* Admin/configuração */}
+          <Route path="/config/financeiro" element={<ConfiguracaoFinanceiro />} />
+          <Route path="/config/jogadores" element={<ConfiguracaoJogadores />} />
+          <Route path="/config/sorteio" element={<ConfiguracaoSorteio />} />
+
+          {/* Admin/gerenciamento */}
+          <Route path="/manage/jogador" element={<ManageJogador />} />
+          <Route path="/manage/eliminacao" element={<ManageEliminacao />} />
+          <Route path="/manage/financeiro" element={<ManageFinanceiro />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
