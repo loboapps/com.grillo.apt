@@ -90,7 +90,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   <Link to="/" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação
                   </Link>
-                  <Link to={`/financeiro/${navData.ultima_etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
+                  <Link to={`/financeiro/${navData.ultima_etapa_id}`} className="block py-1 text-apt-800 hover:text-apt-700">
                     Financeiro {navData.ultima_etapa_nome}
                   </Link>
                   {isAdmin && (
