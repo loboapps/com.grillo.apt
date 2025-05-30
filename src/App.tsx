@@ -1,5 +1,5 @@
 import React from 'react'
-import Classificacao from './pages/classificacao'
+import Classificacao from './pages/Classificacao'
 
 function App() {
   return (
