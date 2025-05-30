@@ -6,6 +6,7 @@ import { icons } from '../utils/icons'
 import Toast from '../components/Toast'
 
 const MenuIcon = icons.SquareMenu
+const TrophyIcon = icons.Trophy
 
 // Adicione este debug temporário
 console.log('MenuIcon:', MenuIcon)
@@ -71,7 +72,9 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
           <MenuIcon />
         </button>
         <h1 className="text-xl font-bold">{title}</h1>
-        <div className="w-8"></div>
+        <Link to="/classificacao" className="p-2 flex items-center justify-center">
+          <TrophyIcon className="w-7 h-7 text-apt-100 hover:text-apt-300 transition-colors" />
+        </Link>
       </nav>
 
       {/* Overlay */}
