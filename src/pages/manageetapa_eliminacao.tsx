@@ -9,7 +9,7 @@ const players = [
   'Leandro', 'Quadros', 'Barcímio', 'Leo'
 ]
 
-const EtapaEliminacaoRebuy = () => {
+const ManageEliminacao = () => {
   const [rebuys, setRebuys] = useState<{ [key: string]: number }>({})
 
   const handleRebuy = (player: string) => {
