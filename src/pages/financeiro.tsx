@@ -46,19 +46,25 @@ const Financeiro = () => {
   return (
     <div className="min-h-screen bg-apt-100">
       <Nav title="Financeiro" />
-      <div className="px-4 pt-2 pb-6">
+      <div className="px-4 pt-10 pb-6">
         {/* Header: Etapa e Data */}
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-apt-800 font-bold">{etapaNome}</span>
-          <span className="text-apt-800">{etapaData}</span>
+        <div className="flex justify-between items-center mb-8">
+          <span className="text-3xl font-bold text-apt-800">{etapaNome}</span>
+          <span className="text-2xl font-bold text-apt-800">{etapaData}</span>
         </div>
 
         {/* Buy-ins */}
         {renderSection('Buy-ins')}
         <div className="grid grid-cols-2 gap-y-2 text-apt-800">
-          <div className="font-bold">Total Buy-in:</div>
+          <div>
+            <span className="font-bold">{buyinTotal}</span>
+            <span className="ml-1">x Buy-in</span>
+          </div>
           <div className="text-right">R${buyinValor.toFixed(2)}</div>
-          <div className="font-bold">Total Re-buy:</div>
+          <div>
+            <span className="font-bold">{rebuyTotal}</span>
+            <span className="ml-1">x Re-buys</span>
+          </div>
           <div className="text-right">R${rebuyValor.toFixed(2)}</div>
         </div>
 
@@ -88,12 +94,12 @@ const Financeiro = () => {
         {renderSection('Premiações')}
         <div className="grid grid-cols-3 gap-y-2 text-apt-800">
           <div></div>
-          <div className="text-center font-bold">Etapa</div>
+          <div className="text-right font-bold pr-2">Etapa</div>
           <div className="text-right font-bold">Total</div>
           {premiacoes.map((p, i) => (
             <React.Fragment key={i}>
               <div>{p.label}</div>
-              <div className="text-center">R${p.etapa.toFixed(2)}</div>
+              <div className="text-right pr-2">R${p.etapa.toFixed(2)}</div>
               <div className="text-right">R${p.total.toFixed(2)}</div>
             </React.Fragment>
           ))}
