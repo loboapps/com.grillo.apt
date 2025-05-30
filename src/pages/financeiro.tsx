@@ -1,34 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import Nav from '../components/Nav'
-
-//financeiro
+import { supabase } from '../lib/supabase'
 
 const Financeiro = () => {
-  // Dummy data
-  const etapaNome = 'Etapa 3'
-  const etapaData = '10/05/2025'
-  const buyinTotal = 11
-  const buyinValor = 1320.0
-  const rebuyTotal = 10
-  const rebuyValor = 1000.0
+  const location = useLocation()
+  const etapaId = location.state?.etapaId
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState<any>(null)
 
-  const premiacao = [
-    { lugar: '1º Lugar', valor: 1000.0 },
-    { lugar: '2º Lugar', valor: 1000.0 },
-    { lugar: '3º Lugar', valor: 1000.0 },
-    { lugar: '4º Lugar', valor: 1000.0 }
-  ]
-
-  const custos = [
-    { label: 'Presidente', valor: 120.0 },
-    { label: 'Casa', valor: 160.0 },
-    { label: 'Dealer', valor: 200.0 }
-  ]
-
-  const premiacoes = [
-    { label: 'Mesa Final', etapa: 80.0, total: 240.0 },
-    { label: 'Campão', etapa: 40.0, total: 180.0 }
-  ]
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!etapaId) return
+      setLoading(true)
+      const { data: resp, error } = await supabase.rpc('financeiro_load', { p_etapa_id: etapaId })
+      if (error) {
+        setData(null)
+      } else if (Array.isArray(resp) && resp[0]?.financeiro_load) {
+        setData(resp[0].financeiro_load)
+      }
+      setLoading(false)
+    }
+    fetchData()
+  }, [etapaId])
 
   const renderSection = (title: string, smallMargin?: boolean) => (
     <div className={`relative ${smallMargin ? 'my-4' : 'my-8'}`}>
@@ -43,38 +37,73 @@ const Financeiro = () => {
     </div>
   )
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-apt-100">
+        <Nav title="Financeiro" />
+        <div className="px-4 pt-10 pb-6">Carregando...</div>
+      </div>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-apt-100">
+        <Nav title="Financeiro" />
+        <div className="px-4 pt-10 pb-6">Nenhum dado encontrado</div>
+      </div>
+    )
+  }
+
+  // Dados do JSON
+  const etapaInfo = data.etapa_info
+  const buyIns = data.buy_ins
+  const premiacao = data.premiacao
+  const custos = data.custos_etapa
+  const mesaFinal = data.mesa_final
+  const campeao = data.campeao
+
   return (
     <div className="min-h-screen bg-apt-100">
       <Nav title="Financeiro" />
       <div className="px-4 pt-10 pb-6">
         {/* Header: Etapa e Data */}
         <div className="flex justify-between items-center mb-8">
-          <span className="text-xl font-bold text-apt-800">{etapaNome}</span>
-          <span className="text-xl font-bold text-apt-800">{etapaData}</span>
+          <span className="text-3xl font-bold text-apt-800">{etapaInfo.nome_etapa}</span>
+          <span className="text-2xl font-bold text-apt-800">{etapaInfo.data}</span>
         </div>
 
         {/* Buy-ins */}
         {renderSection('Buy-ins')}
         <div className="grid grid-cols-2 gap-y-2 text-apt-800">
           <div>
-            <span className="font-bold">{buyinTotal}</span>
+            <span className="font-bold">{buyIns.quantidade_buyin}</span>
             <span className="ml-1">x Buy-in</span>
           </div>
-          <div className="text-right">R${buyinValor.toFixed(2)}</div>
+          <div className="text-right">R${buyIns.valor_total_buyin.toFixed(2)}</div>
           <div>
-            <span className="font-bold">{rebuyTotal}</span>
+            <span className="font-bold">{buyIns.quantidade_rebuy}</span>
             <span className="ml-1">x Re-buys</span>
           </div>
-          <div className="text-right">R${rebuyValor.toFixed(2)}</div>
+          <div className="text-right">R${buyIns.valor_total_rebuy.toFixed(2)}</div>
+          {buyIns.quantidade_addon !== 0 && (
+            <>
+              <div>
+                <span className="font-bold">{buyIns.quantidade_addon}</span>
+                <span className="ml-1">x Add-on</span>
+              </div>
+              <div className="text-right">R${buyIns.valor_total_addon.toFixed(2)}</div>
+            </>
+          )}
         </div>
 
         {/* Premiação */}
         {renderSection('Premiação')}
         <div className="grid grid-cols-2 gap-y-2 text-apt-800">
-          {premiacao.map((p, i) => (
+          {premiacao.map((p: any, i: number) => (
             <React.Fragment key={i}>
-              <div>{p.lugar}</div>
-              <div className="text-right">R${p.valor.toFixed(2)}</div>
+              <div>{p.posicao}º Lugar</div>
+              <div className="text-right">R${p.premio.toFixed(2)}</div>
             </React.Fragment>
           ))}
         </div>
@@ -82,12 +111,14 @@ const Financeiro = () => {
         {/* Custos */}
         {renderSection('Custos')}
         <div className="grid grid-cols-2 gap-y-2 text-apt-800">
-          {custos.map((c, i) => (
-            <React.Fragment key={i}>
-              <div>{c.label}</div>
-              <div className="text-right">R${c.valor.toFixed(2)}</div>
-            </React.Fragment>
-          ))}
+          <div>Presidente</div>
+          <div className="text-right">R${custos.presidente.toFixed(2)}</div>
+          <div>Vice</div>
+          <div className="text-right">R${custos.vice.toFixed(2)}</div>
+          <div>Casa</div>
+          <div className="text-right">R${custos.local?.toFixed(2) ?? '0.00'}</div>
+          <div>Dealer</div>
+          <div className="text-right">R${custos.dealer?.toFixed(2) ?? '0.00'}</div>
         </div>
 
         {/* Premiações */}
@@ -96,13 +127,12 @@ const Financeiro = () => {
           <div></div>
           <div className="text-right font-bold pr-1">Etapa</div>
           <div className="text-right font-bold">Total</div>
-          {premiacoes.map((p, i) => (
-            <React.Fragment key={i}>
-              <div>{p.label}</div>
-              <div className="text-right pr-1">R${p.etapa.toFixed(2)}</div>
-              <div className="text-right">R${p.total.toFixed(2)}</div>
-            </React.Fragment>
-          ))}
+          <div>Mesa Final</div>
+          <div className="text-right pr-1">R${mesaFinal.etapa.toFixed(2)}</div>
+          <div className="text-right">R${mesaFinal.torneio.toFixed(2)}</div>
+          <div>Campão</div>
+          <div className="text-right pr-1">R${campeao.etapa.toFixed(2)}</div>
+          <div className="text-right">R${campeao.torneio.toFixed(2)}</div>
         </div>
       </div>
     </div>
