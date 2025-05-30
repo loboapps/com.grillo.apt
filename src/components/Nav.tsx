@@ -40,12 +40,21 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
       const { data, error } = await supabase.rpc('nav_load')
       console.log('Dados brutos recebidos:', data) // Debug
       
-      // Corrige para acessar SEMPRE data[0].nav_load, mas também trata caso data seja undefined ou vazio
+      // Ajustado para lidar com o formato real dos dados
       let nav = null
-      if (Array.isArray(data) && data.length > 0 && data[0]?.nav_load) {
-        nav = data[0].nav_load
+      if (Array.isArray(data) && data.length > 0) {
+        // Se data é um array, pega o primeiro item
+        if (data[0]?.nav_load) {
+          nav = data[0].nav_load
+        } else if (data[0]?.status) {
+          // Se o primeiro item já tem status, é o objeto direto
+          nav = data[0]
+        }
       } else if (data?.nav_load) {
         nav = data.nav_load
+      } else if (data?.status) {
+        // Se data já tem status, é o objeto direto
+        nav = data
       }
       
       console.log('Nav processado:', nav) // Debug
