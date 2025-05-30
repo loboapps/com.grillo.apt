@@ -7,6 +7,7 @@ export const icons = {
   Skull,
   BadgeMinus,
   BadgePlus,
+  Square-menu
 } as const
 
 export type IconName = keyof typeof icons

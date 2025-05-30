@@ -101,10 +101,10 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
               {/* status: aguardando */}
               {navData?.status === 'aguardando' && (
                 <>
-                  <Link to="/" className="block py-1 text-apt-800 hover:text-apt-700">
+                  <Link to="/classificacao" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação
                   </Link>
-                  <Link to={`/financeiro/${navData.ultima_etapa_id}`} className="block py-1 text-apt-800 hover:text-apt-700">
+                  <Link to="/financeiro" className="block py-1 text-apt-800 hover:text-apt-700">
                     Financeiro {navData.ultima_etapa_nome}
                   </Link>
                   {isAdmin && (
@@ -198,8 +198,11 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
               {/* status: configuracao */}
               {navData?.status === 'configuracao' && (
                 <>
-                  <Link to="/" className="block py-1 text-apt-800 hover:text-apt-700">
+                  <Link to="/classificacao" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação
+                  </Link>
+                  <Link to="/financeiro" className="block py-1 text-apt-800 hover:text-apt-700">
+                    Financeiro
                   </Link>
                   {isAdmin && (
                     <>
@@ -217,18 +220,25 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                         </div>
                       </div>
                       <Link 
-                        to="/config-etapa/financeiro" 
+                        to="/config/financeiro" 
                         state={{ etapaId: navData.etapa_id }}
                         className="block py-1 text-apt-800 hover:text-apt-700"
                       >
                         Financeiro
                       </Link>
                       <Link 
-                        to="/config-etapa/jogadores" 
+                        to="/config/jogadores" 
                         state={{ etapaId: navData.etapa_id }}
                         className="block py-1 text-apt-800 hover:text-apt-700"
                       >
                         Jogadores
+                      </Link>
+                      <Link 
+                        to="/config/sorteio" 
+                        state={{ etapaId: navData.etapa_id }}
+                        className="block py-1 text-apt-800 hover:text-apt-700"
+                      >
+                        Sorteio
                       </Link>
                     </>
                   )}
@@ -238,10 +248,10 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
               {/* status: gerenciamento */}
               {navData?.status === 'gerenciamento' && (
                 <>
-                  <Link to="/" className="block py-1 text-apt-800 hover:text-apt-700">
+                  <Link to="/classificacao" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação ao vivo
                   </Link>
-                  <Link to={`/financeiro/${navData.etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
+                  <Link to="/financeiro" className="block py-1 text-apt-800 hover:text-apt-700">
                     Financeiro {navData.etapa_nome}
                   </Link>
                   {isAdmin && (
@@ -259,15 +269,25 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                           <div className="w-full border-t border-apt-300"></div>
                         </div>
                       </div>
-                      <button
-                        className="block w-full text-left py-1 text-apt-800 hover:text-apt-700"
+                      <Link 
+                        to="/manage/jogador" 
+                        state={{ etapaId: navData.etapa_id }}
+                        className="block py-1 text-apt-800 hover:text-apt-700"
                       >
                         Adicionar Jogador
-                      </button>
-                      <Link to="/gerenciar-etapa/eliminacao" className="block py-1 text-apt-800 hover:text-apt-700">
+                      </Link>
+                      <Link 
+                        to="/manage/eliminacao" 
+                        state={{ etapaId: navData.etapa_id }}
+                        className="block py-1 text-apt-800 hover:text-apt-700"
+                      >
                         Rebuy e Eliminação
                       </Link>
-                      <Link to={`/gerenciar-etapa/financeiro/${navData.etapa_uuid}`} className="block py-1 text-apt-800 hover:text-apt-700">
+                      <Link 
+                        to="/manage/financeiro" 
+                        state={{ etapaId: navData.etapa_id }}
+                        className="block py-1 text-apt-800 hover:text-apt-700"
+                      >
                         Financeiro
                       </Link>
                     </>
