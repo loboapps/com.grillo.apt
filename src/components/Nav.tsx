@@ -109,7 +109,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   </Link>
                   {isAdmin && (
                     <>
-                      <div className="mt-8 mb-3">
+                      <div className="mt-12 mb-3">
                         <div className="flex items-center justify-center">
                           <div className="w-full border-t border-apt-300"></div>
                         </div>
@@ -203,7 +203,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   </Link>
                   {isAdmin && (
                     <>
-                      <div className="mt-8 mb-3">
+                      <div className="mt-12 mb-3">
                         <div className="flex items-center justify-center">
                           <div className="w-full border-t border-apt-300"></div>
                         </div>
@@ -246,7 +246,7 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   </Link>
                   {isAdmin && (
                     <>
-                      <div className="mt-8 mb-3">
+                      <div className="mt-12 mb-3">
                         <div className="flex items-center justify-center">
                           <div className="w-full border-t border-apt-300"></div>
                         </div>
