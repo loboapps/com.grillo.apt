@@ -49,8 +49,8 @@ const Financeiro = () => {
       <div className="px-4 pt-10 pb-6">
         {/* Header: Etapa e Data */}
         <div className="flex justify-between items-center mb-8">
-          <span className="text-3xl font-bold text-apt-800">{etapaNome}</span>
-          <span className="text-2xl font-bold text-apt-800">{etapaData}</span>
+          <span className="text-xl font-bold text-apt-800">{etapaNome}</span>
+          <span className="text-xl font-bold text-apt-800">{etapaData}</span>
         </div>
 
         {/* Buy-ins */}
@@ -94,12 +94,12 @@ const Financeiro = () => {
         {renderSection('Premiações')}
         <div className="grid grid-cols-3 gap-y-2 text-apt-800">
           <div></div>
-          <div className="text-right font-bold pr-2">Etapa</div>
+          <div className="text-right font-bold pr-1">Etapa</div>
           <div className="text-right font-bold">Total</div>
           {premiacoes.map((p, i) => (
             <React.Fragment key={i}>
               <div>{p.label}</div>
-              <div className="text-right pr-2">R${p.etapa.toFixed(2)}</div>
+              <div className="text-right pr-1">R${p.etapa.toFixed(2)}</div>
               <div className="text-right">R${p.total.toFixed(2)}</div>
             </React.Fragment>
           ))}
