@@ -1,4 +1,4 @@
-import { BadgeCheck, BadgeX, BanknoteIcon, Skull, BadgeMinus, BadgePlus } from 'lucide-react'
+import { BadgeCheck, BadgeX, BanknoteIcon, Skull, BadgeMinus, BadgePlus, SquareMenu } from 'lucide-react'
 
 export const icons = {
   BadgeCheck,
@@ -7,7 +7,7 @@ export const icons = {
   Skull,
   BadgeMinus,
   BadgePlus,
-  Square-menu
+  SquareMenu
 } as const
 
 export type IconName = keyof typeof icons
