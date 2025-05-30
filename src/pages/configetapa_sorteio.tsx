@@ -2,12 +2,12 @@ import React from 'react'
 import Nav from '../components/Nav'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-const EtapaMesas = () => {
+const ConfiguracaoSorteio = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { members = [], guests = [] } = location.state || {}
 
-  const allPlayers = [...members, ...guests.filter(g => g.trim() !== '')]
+  const allPlayers = [...members, ...guests.filter((g: string) => g.trim() !== '')]
   const playersPerTable = Math.ceil(allPlayers.length / 2)
   const showThirdTable = allPlayers.length > 18
 
