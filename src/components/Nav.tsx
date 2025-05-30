@@ -38,6 +38,8 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   useEffect(() => {
     const fetchNav = async () => {
       const { data, error } = await supabase.rpc('nav_load')
+      console.log('Dados brutos recebidos:', data) // Debug
+      
       // Corrige para acessar SEMPRE data[0].nav_load, mas também trata caso data seja undefined ou vazio
       let nav = null
       if (Array.isArray(data) && data.length > 0 && data[0]?.nav_load) {
@@ -45,6 +47,9 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
       } else if (data?.nav_load) {
         nav = data.nav_load
       }
+      
+      console.log('Nav processado:', nav) // Debug
+      
       if (nav) {
         setNavData(nav)
         if (onNavData) onNavData(nav)
@@ -218,7 +223,6 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                       </div>
                       <button
                         className="block w-full text-left py-1 text-apt-800 hover:text-apt-700"
-                        // onClick={...}
                       >
                         Adicionar Jogador
                       </button>
