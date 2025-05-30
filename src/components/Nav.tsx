@@ -63,7 +63,8 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
     <>
       <nav className="bg-apt-500 text-apt-100 px-4 py-3 flex items-center justify-between shadow-md">
         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
-          <MenuIcon />
+          {/* Corrija para garantir que MenuIcon é um componente válido */}
+          {MenuIcon ? <MenuIcon /> : null}
         </button>
         <h1 className="text-xl font-bold">{title}</h1>
         <div className="w-8"></div>
