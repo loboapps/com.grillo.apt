@@ -280,4 +280,4 @@ const EtapaJogadores = () => {
   )
 }
 
-export default EtapaJogadores
+export default ConfiguracaoJogadores

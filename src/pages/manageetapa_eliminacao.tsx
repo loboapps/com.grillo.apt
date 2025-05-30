@@ -60,4 +60,4 @@ const EtapaEliminacaoRebuy = () => {
   )
 }
 
-export default EtapaEliminacaoRebuy
+export default ManageEliminacao

@@ -1,1 +1,3 @@
 //perfil
+
+export default Perfil

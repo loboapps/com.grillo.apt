@@ -1,1 +1,3 @@
 //financeiro
+
+export default Financeiro

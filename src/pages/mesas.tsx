@@ -1,1 +1,3 @@
 //mesas
+
+export default Mesas

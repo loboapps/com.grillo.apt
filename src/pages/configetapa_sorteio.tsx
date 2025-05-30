@@ -56,4 +56,4 @@ const EtapaMesas = () => {
   )
 }
 
-export default EtapaMesas
+export default ConfiguracaoSorteio
