@@ -22,7 +22,7 @@ const Classificacao = () => {
           console.error('Error:', error)
           return
         }
-        console.log('Supabase response:', data) // Debug log
+        console.log('Supabase response:', data)
         setPlayers(data)
       } catch (err) {
         console.error('Fetch error:', err)
