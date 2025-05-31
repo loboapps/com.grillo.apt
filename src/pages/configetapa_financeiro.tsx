@@ -61,10 +61,10 @@ const ConfiguracaoFinanceiro = () => {
       if (error) {
         console.log('Erro na consulta:', error)
         setConfigData(null)
-      } else if (Array.isArray(data) && data.length > 0 && data[0]?.configetapa_financeiro_load) {
-        console.log('Dados encontrados:', data[0].configetapa_financeiro_load)
-        setConfigData(data[0].configetapa_financeiro_load)
-        setEditValues(data[0].configetapa_financeiro_load.etapa)
+      } else if (data && typeof data === 'object' && data.etapa) {
+        console.log('Dados encontrados:', data)
+        setConfigData(data)
+        setEditValues(data.etapa)
       } else {
         console.log('Resposta não tem o formato esperado:', data)
         setConfigData(null)
@@ -73,7 +73,7 @@ const ConfiguracaoFinanceiro = () => {
     }
     fetchData()
   }, [etapaId])
-
+  
   useEffect(() => {
     if (configData?.etapa) setEditValues(configData.etapa)
   }, [configData])
