@@ -8,11 +8,6 @@ import Toast from '../components/Toast'
 const MenuIcon = icons.SquareMenu
 const TrophyIcon = icons.Trophy
 
-// Adicione este debug temporário
-console.log('MenuIcon:', MenuIcon)
-console.log('icons.SquareMenu:', icons.SquareMenu)
-
-
 interface NavProps {
   title: string;
   onNavData?: (navData: any) => void // callback para passar o nav_load para páginas filhas se necessário
