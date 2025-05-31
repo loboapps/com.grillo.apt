@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Nav from '../components/Nav'
 import SubNav from '../components/SubNav'
 import Toast from '../components/Toast'
-import { supabase } from '../lib/supabase'
 
 interface EtapaConfig {
   id?: number
@@ -31,8 +30,35 @@ interface FinancialConfig {
   etapas: EtapaConfig[]
 }
 
+const MOCK_DATA: FinancialConfig = {
+  nome: "APT XXIII",
+  inicio: "2025-03-31",
+  fim: "2025-10-13",
+  numero_buyins: 1,
+  valor_buyins: 120,
+  numero_rebuys: 2,
+  valor_rebuys: 100,
+  numero_addons: 0,
+  valor_addons: 0,
+  etapas: [
+    {
+      id: 1,
+      etapa: "Etapa 4",
+      data: "2025-06-09",
+      inicio: null,
+      fim: null,
+      fn_presidente_value: 120,
+      fn_vice_value: 0,
+      dealer_value: 200,
+      local_value: 160,
+      mesa_final_value: 80,
+      season1st_value: 40
+    }
+  ]
+}
+
 const ConfiguracaoFinanceiro = () => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [configData, setConfigData] = useState<FinancialConfig | null>(null)
   const [selectedEtapa, setSelectedEtapa] = useState<EtapaConfig | null>(null)
   const [editValues, setEditValues] = useState<EtapaConfig | null>(null)
@@ -40,35 +66,10 @@ const ConfiguracaoFinanceiro = () => {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data: response, error } = await supabase.rpc('configetapa_financeiro_load')
-        console.log('Raw response:', response)
-
-        if (error) {
-          console.error('Error:', error)
-          return
-        }
-
-        // Response comes directly as array with first item containing all data
-        if (response?.[0]) {
-          const config = response[0]
-          console.log('Config data:', config)
-          setConfigData(config)
-          
-          const activeEtapa = config.etapas.find(e => e.inicio && !e.fim) 
-            || config.etapas.find(e => !e.inicio && !e.fim)
-          
-          setSelectedEtapa(activeEtapa || config.etapas[0])
-        }
-      } catch (err) {
-        console.error('Fetch error:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
+    // Mock dos dados
+    setConfigData(MOCK_DATA)
+    setSelectedEtapa(MOCK_DATA.etapas[0])
+    setLoading(false)
   }, [])
 
   useEffect(() => {
@@ -87,28 +88,11 @@ const ConfiguracaoFinanceiro = () => {
 
   const handleConfirm = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!editValues?.id) return
     setSaving(true)
-    try {
-      const { data, error } = await supabase.rpc('configetapa_financeiro_confirmar', {
-        p_etapa_id: editValues.id,
-        p_presidente_value: editValues.fn_presidente_value,
-        p_vice_value: editValues.fn_vice_value,
-        p_dealer_value: editValues.dealer_value,
-        p_local_value: editValues.local_value,
-        p_mesa_final_value: editValues.mesa_final_value,
-        p_season1st_value: editValues.season1st_value,
-      })
-      if (error) {
-        setToast({ message: 'Erro ao salvar: ' + error.message, type: 'error' })
-      } else if (data?.success) {
-        setToast({ message: 'Configuração salva com sucesso!', type: 'success' })
-      } else {
-        setToast({ message: 'Não foi possível salvar a configuração.', type: 'error' })
-      }
-    } finally {
+    setTimeout(() => {
+      setToast({ message: 'Mock: Configuração salva com sucesso!', type: 'success' })
       setSaving(false)
-    }
+    }, 1000)
   }
 
   const renderValueInput = (label: string, field: keyof EtapaConfig) => (
@@ -182,7 +166,6 @@ const ConfiguracaoFinanceiro = () => {
                   <button
                     type="button"
                     className="w-[90px] ml-2 bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
-                    // onClick={handleIniciarEtapa} // Implemente a função se necessário
                   >
                     Iniciar
                   </button>

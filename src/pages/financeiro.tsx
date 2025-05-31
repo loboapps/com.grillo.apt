@@ -8,7 +8,6 @@ const Financeiro = () => {
     const etapaId = location.state?.etapaId
 
     // Adicione estes logs para debug
-    console.log('location.state:', location.state)
     console.log('etapaId:', etapaId)
 
     const [loading, setLoading] = useState(true)
@@ -17,26 +16,16 @@ const Financeiro = () => {
     useEffect(() => {
         const fetchData = async () => {
             if (!etapaId) {
-                console.log('etapaId não existe, retornando')
                 return
             }
-
             setLoading(true)
-            console.log('Chamando financeiro_load com etapaId:', etapaId)
-
             const { data: resp, error } = await supabase.rpc('financeiro_load', { p_etapa_id: etapaId })
-
-            console.log('Resposta do supabase:', { resp, error })
-
             if (error) {
-                console.log('Erro na consulta:', error)
                 setData(null)
             } else if (resp && typeof resp === 'object') {
                 // A resposta já é o objeto direto com os dados
-                console.log('Dados encontrados:', resp)
                 setData(resp)
             } else {
-                console.log('Resposta não tem o formato esperado:', resp)
                 setData(null)
             }
             setLoading(false)

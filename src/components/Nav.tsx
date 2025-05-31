@@ -24,7 +24,6 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   useEffect(() => {
     const fetchNav = async () => {
       const { data, error } = await supabase.rpc('nav_load')
-      console.log('Dados brutos recebidos:', data) // Debug
 
       // Ajustado para lidar com o formato real dos dados
       let nav = null
