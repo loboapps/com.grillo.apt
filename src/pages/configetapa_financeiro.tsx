@@ -45,18 +45,28 @@ const ConfiguracaoFinanceiro = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!etapaId) {
+        console.log('etapaId não existe')
         setLoading(false)
         setConfigData(null)
         return
       }
+
       setLoading(true)
+      console.log('Chamando configetapa_financeiro_load com etapaId:', etapaId)
+
       const { data, error } = await supabase.rpc('configetapa_financeiro_load', { p_etapa_id: etapaId })
+
+      console.log('Resposta do supabase:', { data, error })
+
       if (error) {
+        console.log('Erro na consulta:', error)
         setConfigData(null)
-      } else if (Array.isArray(data) && data[0]?.configetapa_financeiro_load) {
+      } else if (Array.isArray(data) && data.length > 0 && data[0]?.configetapa_financeiro_load) {
+        console.log('Dados encontrados:', data[0].configetapa_financeiro_load)
         setConfigData(data[0].configetapa_financeiro_load)
         setEditValues(data[0].configetapa_financeiro_load.etapa)
       } else {
+        console.log('Resposta não tem o formato esperado:', data)
         setConfigData(null)
       }
       setLoading(false)
@@ -129,10 +139,10 @@ const ConfiguracaoFinanceiro = () => {
   return (
     <div className="min-h-screen bg-apt-100">
       {toast && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast(null)} 
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
         />
       )}
       <Nav title="Configurar etapa" />
