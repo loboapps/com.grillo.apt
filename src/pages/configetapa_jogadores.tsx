@@ -4,8 +4,17 @@ import SubNav from '../components/SubNav'
 import Toast from '../components/Toast'
 import { useGuests } from '../hooks/useGuests'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
 import { icons } from '../utils/icons'
+
+// MOCK DATA
+const MOCK_PLAYERS = [
+  { id: '1', nome: 'Pietro', apelido: null, telefone: null, status: 'confirmado' },
+  { id: '2', nome: 'Chico', apelido: null, telefone: null, status: 'confirmado' },
+  { id: '3', nome: 'Binho', apelido: null, telefone: null, status: 'falta' },
+  { id: '4', nome: 'Marcelo', apelido: null, telefone: null, status: 'confirmado' },
+  { id: '5', nome: 'João', apelido: null, telefone: null, status: 'falta' }
+]
+const MOCK_CONFIRMED_GUESTS = ['Barcímio', 'Leo']
 
 interface Player {
   id: string | null
@@ -26,35 +35,15 @@ const ConfiguracaoJogadores = () => {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   useEffect(() => {
-    const fetchPlayers = async () => {
-      try {
-        const { data, error } = await supabase.rpc('configetapa_jogadores_load')
-        if (error) return
-
-        if (data) {
-          const regularPlayers = data.filter(p => p.id !== null)
-          const guestsData = data.filter(p => p.status === 'convidado')
-
-          setPlayers(regularPlayers)
-          setConfirmedGuests(guestsData.map(g => g.nome))
-          
-          // Only set status if it's explicitly confirmado or falta
-          const initialConfirmed = regularPlayers.reduce((acc, player) => ({
-            ...acc,
-            ...(player.status === 'confirmado' ? { [player.id]: true } : {}),
-            ...(player.status === 'falta' ? { [player.id]: false } : {})
-          }), {})
-          
-          setConfirmedPlayers(initialConfirmed)
-        }
-      } catch (err) {
-        console.error('Fetch error:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchPlayers()
+    // MOCK: popula os dados sem backend
+    setPlayers(MOCK_PLAYERS)
+    setConfirmedGuests(MOCK_CONFIRMED_GUESTS)
+    const initialConfirmed = MOCK_PLAYERS.reduce((acc, player) => ({
+      ...acc,
+      [player.id!]: player.status === 'confirmado'
+    }), {})
+    setConfirmedPlayers(initialConfirmed)
+    setLoading(false)
   }, [])
 
   const handlePlayerStatus = async (playerId: string, confirmed: boolean) => {
@@ -181,30 +170,30 @@ const ConfiguracaoJogadores = () => {
               <span className="text-apt-800 flex-1">{player.nome}</span>
               <div className="flex gap-2 min-w-[120px] justify-end">
                 <button 
-                  onClick={() => handlePlayerStatus(player.id, true)}
+                  onClick={() => setConfirmedPlayers(prev => ({ ...prev, [player.id!]: true }))}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
-                    confirmedPlayers[player.id] === true 
+                    confirmedPlayers[player.id!] === true 
                       ? 'bg-apt-800 border-apt-800' 
                       : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
                   <icons.BadgeCheck 
-                    className={confirmedPlayers[player.id] === true
+                    className={confirmedPlayers[player.id!] === true
                       ? 'text-apt-100' 
                       : 'text-apt-800'
                     }
                   />
                 </button>
                 <button 
-                  onClick={() => handlePlayerStatus(player.id, false)}
+                  onClick={() => setConfirmedPlayers(prev => ({ ...prev, [player.id!]: false }))}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
-                    confirmedPlayers[player.id] === false 
+                    confirmedPlayers[player.id!] === false 
                       ? 'bg-apt-800 border-apt-800' 
                       : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
                   <icons.BadgeX 
-                    className={confirmedPlayers[player.id] === false
+                    className={confirmedPlayers[player.id!] === false
                       ? 'text-apt-100' 
                       : 'text-red-500'
                     }
@@ -222,7 +211,7 @@ const ConfiguracaoJogadores = () => {
                 <div key={`confirmed-guest-${index}`} className="flex items-center border-b border-apt-300 pb-2">
                   <span className="text-apt-800 flex-1">{guest}</span>
                   <button 
-                    onClick={() => handleRemoveGuest(index)}
+                    onClick={() => setConfirmedGuests(prev => prev.filter((_, i) => i !== index))}
                     className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
                   >
                     <icons.BadgeMinus className="text-red-500" />
@@ -245,14 +234,17 @@ const ConfiguracaoJogadores = () => {
               <div className="flex gap-2">
                 {!addedGuests[index] ? (
                   <button 
-                    onClick={() => handleAddGuest(index)}
+                    onClick={() => {
+                      setConfirmedGuests(prev => [...prev, guest])
+                      removeGuest(index)
+                    }}
                     className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
                   >
                     <icons.BadgePlus className="text-apt-800" />
                   </button>
                 ) : (
                   <button 
-                    onClick={() => handleRemoveGuest(index)}
+                    onClick={() => setConfirmedGuests(prev => prev.filter((_, i) => i !== index))}
                     className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
                   >
                     <icons.BadgeMinus className="text-red-500" />
@@ -268,7 +260,12 @@ const ConfiguracaoJogadores = () => {
               Adicionar Convidado
             </button>
             <button
-              onClick={handleSortearMesas}
+              onClick={() => navigate('/config-etapa/mesas', { 
+                state: { 
+                  members: players.map(p => ({ id: p.id, nome: p.nome })),
+                  guests: guests.filter(g => g.trim() !== '')
+                } 
+              })}
               className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900"
             >
               Sortear Mesa
