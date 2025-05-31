@@ -119,29 +119,10 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                       <button
                         className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
                         onClick={async () => {
-                          // Log do ID recebido
-                          console.log('ID recebido do JSON:', navData.proxima_etapa_id)
-                          // Debug 1: Verificar o UUID
-                          console.log('UUID que será enviado:', navData.proxima_etapa_id)
-                          console.log('Tipo do UUID:', typeof navData.proxima_etapa_id)
-                          console.log('UUID é válido?', navData.proxima_etapa_id ? 'Sim' : 'Não')
                           try {
-                            // Debug 2: Testar a chamada RPC
-                            console.log('Iniciando chamada RPC...')
                             const { data, error } = await supabase.rpc('aguardando_iniciar_etapa', {
                               p_etapa_id: navData.proxima_etapa_id
                             })
-                            // Log do ID enviado
-                            console.log('ID enviado para o backend:', navData.proxima_etapa_id)
-                            // Debug 3: Ver resposta completa
-                            console.log('Resposta completa:', { data, error })
-                            console.log('Error details:', error)
-                            if (error) {
-                              console.log('Tipo do error:', error.code)
-                              console.log('Mensagem do error:', error.message)
-                              console.log('Details do error:', error.details)
-                              console.log('Hint do error:', error.hint)
-                            }
                             if (error || data?.sucesso === false) {
                               setToast({
                                 message: data?.mensagem || error?.message || 'Erro ao iniciar etapa',
@@ -189,8 +170,12 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   <Link to="/classificacao" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação
                   </Link>
-                  <Link to="/financeiro" className="block py-1 text-apt-800 hover:text-apt-700">
-                    Financeiro
+                  <Link
+                    to="/financeiro"
+                    state={{ etapaId: navData.ultima_etapa_id }}
+                    className="block py-1 text-apt-800 hover:text-apt-700"
+                  >
+                    Financeiro {navData.ultima_etapa_nome}
                   </Link>
                   {isAdmin && (
                     <>
