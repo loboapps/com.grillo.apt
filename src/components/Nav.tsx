@@ -205,13 +205,6 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                       >
                         Jogadores
                       </Link>
-                      <Link 
-                        to="/config/sorteio" 
-                        state={{ etapaId: navData.etapa_id }}
-                        className="block py-1 text-apt-800 hover:text-apt-700"
-                      >
-                        Sorteio
-                      </Link>
                     </>
                   )}
                 </>

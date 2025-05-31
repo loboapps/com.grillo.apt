@@ -52,28 +52,20 @@ const ConfiguracaoFinanceiro = () => {
       }
 
       setLoading(true)
-      console.log('Chamando configetapa_financeiro_load com etapaId:', etapaId)
-
       const { data, error } = await supabase.rpc('configetapa_financeiro_load', { p_etapa_id: etapaId })
-
-      console.log('Resposta do supabase:', { data, error })
-
       if (error) {
-        console.log('Erro na consulta:', error)
         setConfigData(null)
       } else if (data && typeof data === 'object' && data.etapa) {
-        console.log('Dados encontrados:', data)
         setConfigData(data)
         setEditValues(data.etapa)
       } else {
-        console.log('Resposta não tem o formato esperado:', data)
         setConfigData(null)
       }
       setLoading(false)
     }
     fetchData()
   }, [etapaId])
-  
+
   useEffect(() => {
     if (configData?.etapa) setEditValues(configData.etapa)
   }, [configData])
