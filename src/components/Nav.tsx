@@ -30,26 +30,24 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
     const fetchNav = async () => {
       const { data, error } = await supabase.rpc('nav_load')
       console.log('Dados brutos recebidos:', data) // Debug
-      
+
       // Ajustado para lidar com o formato real dos dados
       let nav = null
       if (Array.isArray(data) && data.length > 0) {
-        // Se data é um array, pega o primeiro item
         if (data[0]?.nav_load) {
           nav = data[0].nav_load
         } else if (data[0]?.status) {
-          // Se o primeiro item já tem status, é o objeto direto
           nav = data[0]
         }
       } else if (data?.nav_load) {
         nav = data.nav_load
       } else if (data?.status) {
-        // Se data já tem status, é o objeto direto
         nav = data
       }
-      
-      console.log('Nav processado:', nav) // Debug
-      
+
+      // Log do JSON processado
+      console.log('Nav processado:', nav)
+
       if (nav) {
         setNavData(nav)
         if (onNavData) onNavData(nav)
@@ -126,29 +124,29 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                       <button
                         className="w-full bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
                         onClick={async () => {
+                          // Log do ID recebido
+                          console.log('ID recebido do JSON:', navData.proxima_etapa_id)
                           // Debug 1: Verificar o UUID
                           console.log('UUID que será enviado:', navData.proxima_etapa_id)
                           console.log('Tipo do UUID:', typeof navData.proxima_etapa_id)
                           console.log('UUID é válido?', navData.proxima_etapa_id ? 'Sim' : 'Não')
-                          
                           try {
                             // Debug 2: Testar a chamada RPC
                             console.log('Iniciando chamada RPC...')
                             const { data, error } = await supabase.rpc('aguardando_iniciar_etapa', {
                               p_etapa_id: navData.proxima_etapa_id
                             })
-                            
+                            // Log do ID enviado
+                            console.log('ID enviado para o backend:', navData.proxima_etapa_id)
                             // Debug 3: Ver resposta completa
                             console.log('Resposta completa:', { data, error })
                             console.log('Error details:', error)
-                            
                             if (error) {
                               console.log('Tipo do error:', error.code)
                               console.log('Mensagem do error:', error.message)
                               console.log('Details do error:', error.details)
                               console.log('Hint do error:', error.hint)
                             }
-                            
                             if (error || data?.sucesso === false) {
                               setToast({
                                 message: data?.mensagem || error?.message || 'Erro ao iniciar etapa',
@@ -156,7 +154,6 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                               })
                               return
                             }
-                            
                             // Sucesso: recarrega nav_load
                             const { data: newNavData } = await supabase.rpc('nav_load')
                             let newNav = null
@@ -179,7 +176,6 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                               message: data?.mensagem || 'Configuração da etapa iniciada com sucesso',
                               type: 'success'
                             })
-                            
                           } catch (catchError) {
                             console.log('Erro no catch:', catchError)
                           }
