@@ -66,7 +66,6 @@ const ConfiguracaoFinanceiro = () => {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   useEffect(() => {
-    // Mock dos dados
     setConfigData(MOCK_DATA)
     setSelectedEtapa(MOCK_DATA.etapas[0])
     setLoading(false)
@@ -143,64 +142,26 @@ const ConfiguracaoFinanceiro = () => {
       <div className="px-4 pt-2 pb-6">
         <form onSubmit={handleConfirm}>
           <div className="space-y-4">
-            {renderSection('Etapa', true)}
-            
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <select 
-                  value={selectedEtapa?.etapa || ''}
-                  onChange={(e) => {
-                    const etapa = configData.etapas.find(et => et.etapa === e.target.value)
-                    setSelectedEtapa(etapa || null)
-                  }}
-                  className={`border rounded p-2 flex-1 min-w-0 ${!selectedEtapa?.inicio ? 'w-[calc(100%-100px)]' : 'w-full'}`}
-                  style={{ maxWidth: !selectedEtapa?.inicio ? 'calc(100% - 100px)' : '100%' }}
-                >
-                  {configData.etapas.map(etapa => (
-                    <option key={etapa.etapa} value={etapa.etapa}>
-                      {etapa.etapa}
-                    </option>
-                  ))}
-                </select>
-                {!selectedEtapa?.inicio && (
-                  <button
-                    type="button"
-                    className="w-[90px] ml-2 bg-apt-500 text-apt-100 p-2 rounded hover:bg-apt-300 hover:text-apt-900"
-                  >
-                    Iniciar
-                  </button>
-                )}
-              </div>
+            {/* {renderSection('Etapa', true)} */}
+            {/* Removido bloco ETAPA */}
 
-              {selectedEtapa?.inicio && (
-                <div className="text-apt-800">
-                  <div>Início: {formatDateTime(selectedEtapa.inicio)}</div>
-                  {selectedEtapa.fim && (
-                    <div>Fim: {formatDateTime(selectedEtapa.fim)}</div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {renderSection('Entradas')}
-            
-            <div className="space-y-4 text-apt-800">
+            {renderSection('Buy-in')}
+            <div className="space-y-2 text-apt-800">
               <div className="flex justify-between items-center">
-                <span>Buy-in</span>
-                <span>{configData.numero_buyins}x R$ {configData.valor_buyins.toFixed(2)}</span>
+                <span>{MOCK_DATA.numero_buyins}x Buy-in</span>
+                <span>R$ {MOCK_DATA.valor_buyins.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span>Re-buy</span>
-                <span>{configData.numero_rebuys}x R$ {configData.valor_rebuys.toFixed(2)}</span>
+                <span>{MOCK_DATA.numero_rebuys}x Re-buy</span>
+                <span>R$ {MOCK_DATA.valor_rebuys.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span>Add-on</span>
-                <span>{configData.numero_addons}x R$ {configData.valor_addons.toFixed(2)}</span>
+                <span>{MOCK_DATA.numero_addons}x Add-on</span>
+                <span>R$ {MOCK_DATA.valor_addons.toFixed(2)}</span>
               </div>
             </div>
 
-            {renderSection('Custos fixos')}
-            
+            {renderSection('Custos')}
             <div className="space-y-4">
               {isEtapaEditable && editValues ? (
                 <>
