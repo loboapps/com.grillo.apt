@@ -14,6 +14,7 @@ const ConfiguracaoSorteio = () => {
       if (!etapaId) return
       setLoading(true)
       const { data, error } = await supabase.rpc('configetapa_sorteio', { p_etapa_id: etapaId })
+      console.log('Retorno de configetapa_sorteio:', data)
       if (error) {
         setMesas({})
       } else if (data && typeof data === 'object') {
