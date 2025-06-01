@@ -27,6 +27,7 @@ const ConfiguracaoJogadores = () => {
   const fetchPlayers = async () => {
     setLoading(true)
     const { data, error } = await supabase.rpc('configetapa_jogadores_load', { p_etapa_id: etapaId })
+    console.log('JSON recebido do backend:', data) // <-- log do JSON recebido
     if (error) {
       setToast({ message: 'Erro ao carregar jogadores', type: 'error' })
       setLoading(false)
