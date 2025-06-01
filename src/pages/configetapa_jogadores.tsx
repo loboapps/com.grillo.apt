@@ -63,17 +63,18 @@ const fetchPlayers = async () => {
     }
   }
 
-  // Remove convidado
-  const handleRemoveGuest = async (guestName: string) => {
+  // Remove ou adiciona convidado
+  const handleGuestAction = async (guestName: string, acao: 'adicionar' | 'cortar') => {
     if (!etapaId) return
-    const { error } = await supabase.rpc('configetapa_jogadores_convidado', {
+    const { data, error } = await supabase.rpc('configetapa_jogadores_convidado', {
       p_etapa_id: etapaId,
-      p_jogador_nome: guestName
+      p_jogador_nome: guestName,
+      p_acao: acao
     })
     if (error) {
-      setToast({ message: 'Erro ao remover convidado', type: 'error' })
+      setToast({ message: 'Erro ao atualizar convidado', type: 'error' })
     } else {
-      setToast({ message: 'Convidado removido', type: 'success' })
+      setToast({ message: data || 'Ação realizada', type: 'success' })
       fetchPlayers()
     }
   }
@@ -168,7 +169,7 @@ const fetchPlayers = async () => {
                 <div key={`confirmed-guest-${index}`} className="flex items-center border-b border-apt-300 pb-2">
                   <span className="text-apt-800 flex-1">{guest}</span>
                   <button 
-                    onClick={() => handleRemoveGuest(guest)}
+                    onClick={() => handleGuestAction(guest, 'cortar')}
                     className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
                   >
                     <icons.BadgeMinus className="text-red-500" />
@@ -191,8 +192,10 @@ const fetchPlayers = async () => {
               <div className="flex gap-2">
                 <button 
                   onClick={() => {
-                    // Não há endpoint para adicionar convidado, apenas recarrega
-                    setToast({ message: 'Adicionar convidado não implementado', type: 'error' })
+                    if (guest.trim()) {
+                      handleGuestAction(guest, 'adicionar')
+                      removeGuest(index)
+                    }
                   }}
                   className="w-10 h-10 border border-apt-800 rounded flex items-center justify-center hover:bg-gray-100"
                 >
