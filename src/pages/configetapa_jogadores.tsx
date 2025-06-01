@@ -50,7 +50,7 @@ const fetchPlayers = async () => {
   // Atualiza status do jogador
   const handlePlayerStatus = async (playerId: string, status: 'falta' | 'presente') => {
     if (!etapaId) return
-    const { error } = await supabase.rpc('configetapa_jogador_status', {
+    const { data, error } = await supabase.rpc('configetapa_jogador_status', {
       p_etapa_id: etapaId,
       p_jogador_id: playerId,
       p_status: status
@@ -58,7 +58,7 @@ const fetchPlayers = async () => {
     if (error) {
       setToast({ message: 'Erro ao atualizar status', type: 'error' })
     } else {
-      setToast({ message: 'Status atualizado', type: 'success' })
+      setToast({ message: data || 'Status atualizado', type: 'success' })
       fetchPlayers()
     }
   }
@@ -122,32 +122,36 @@ const fetchPlayers = async () => {
             } border-apt-300 pb-2`}>
               <span className="text-apt-800 flex-1">{player.nome}</span>
               <div className="flex gap-2 min-w-[120px] justify-end">
-                <button 
+                {/* Presente */}
+                <button
+                  disabled={player.status === 'presente'}
                   onClick={() => handlePlayerStatus(player.id_jogador, 'presente')}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
                     player.status === 'presente'
-                      ? 'bg-apt-800 border-apt-800'
+                      ? 'bg-apt-800 border-apt-800 cursor-default'
                       : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
-                  <icons.BadgeCheck 
+                  <icons.BadgeCheck
                     className={player.status === 'presente'
-                      ? 'text-apt-100' 
+                      ? 'text-apt-100'
                       : 'text-apt-800'
                     }
                   />
                 </button>
-                <button 
+                {/* Falta */}
+                <button
+                  disabled={player.status === 'falta'}
                   onClick={() => handlePlayerStatus(player.id_jogador, 'falta')}
                   className={`w-10 h-10 border rounded flex items-center justify-center ${
                     player.status === 'falta'
-                      ? 'bg-apt-800 border-apt-800'
+                      ? 'bg-apt-800 border-apt-800 cursor-default'
                       : 'border-apt-800 hover:bg-gray-100'
                   }`}
                 >
-                  <icons.BadgeX 
+                  <icons.BadgeX
                     className={player.status === 'falta'
-                      ? 'text-apt-100' 
+                      ? 'text-apt-100'
                       : 'text-red-500'
                     }
                   />
