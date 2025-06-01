@@ -212,10 +212,7 @@ const fetchPlayers = async () => {
             </button>
             <button
               onClick={() => navigate('/config_etapa/mesas', { 
-                state: { 
-                  members: players.map(p => ({ id: p.id_jogador, nome: p.nome })),
-                  guests: guests.filter(g => g.trim() !== '')
-                } 
+                state: { etapaId }
               })}
               className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900"
             >
