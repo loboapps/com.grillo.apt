@@ -24,22 +24,24 @@ const ConfiguracaoJogadores = () => {
   const [confirmedGuests, setConfirmedGuests] = useState<string[]>([])
 
   // Carrega jogadores e convidados
-  const fetchPlayers = async () => {
-    setLoading(true)
-    const { data, error } = await supabase.rpc('configetapa_jogadores_load', { p_etapa_id: etapaId })
-    console.log('JSON recebido do backend:', data) // <-- log do JSON recebido
-    if (error) {
-      setToast({ message: 'Erro ao carregar jogadores', type: 'error' })
-      setLoading(false)
-      return
-    }
-    const jogadores = Array.isArray(data) && data[0]?.configetapa_jogadores_load
-      ? data[0].configetapa_jogadores_load
-      : []
-    setPlayers(jogadores.filter((p: any) => p.id_jogador))
-    setConfirmedGuests(jogadores.filter((p: any) => !p.id_jogador).map((g: any) => g.nome))
+const fetchPlayers = async () => {
+  setLoading(true)
+  const { data, error } = await supabase.rpc('configetapa_jogadores_load', { p_etapa_id: etapaId })
+  console.log('JSON recebido do backend:', data)
+  
+  if (error) {
+    setToast({ message: 'Erro ao carregar jogadores', type: 'error' })
     setLoading(false)
+    return
   }
+  
+  // A resposta já é o array direto de jogadores
+  const jogadores = Array.isArray(data) ? data : []
+  
+  setPlayers(jogadores.filter((p: any) => p.id_jogador))
+  setConfirmedGuests(jogadores.filter((p: any) => !p.id_jogador).map((g: any) => g.nome))
+  setLoading(false)
+}
 
   useEffect(() => {
     if (etapaId) fetchPlayers()
