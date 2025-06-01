@@ -92,6 +92,11 @@ const fetchPlayers = async () => {
     </div>
   )
 
+  // Verifica se todos os jogadores têm status definido (presente ou falta)
+  const allPlayersConfirmed = players.length > 0 && players.every(
+    (p) => p.status === 'presente' || p.status === 'falta'
+  )
+
   if (loading) {
     return (
       <div className="min-h-screen bg-apt-100">
@@ -214,7 +219,8 @@ const fetchPlayers = async () => {
               onClick={() => navigate('/config_etapa/mesas', { 
                 state: { etapaId }
               })}
-              className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900"
+              className={`w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900 ${!allPlayersConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={!allPlayersConfirmed}
             >
               Sortear Mesa
             </button>
