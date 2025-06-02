@@ -33,7 +33,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           {/* Admin/configuração */}
           <Route path="/config/financeiro" element={<ConfiguracaoFinanceiro />} />
           <Route path="/config/jogadores" element={<ConfiguracaoJogadores />} />
-          <Route path="/config/sorteio" element={<ConfiguracaoSorteio />} />
+          <Route
+            path="/config/sorteio"
+            element={<ConfiguracaoSorteio />}
+          />
 
           {/* Admin/gerenciamento */}
           <Route path="/manage/jogador" element={<ManageJogador />} />
