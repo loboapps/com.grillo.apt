@@ -19,7 +19,7 @@ const Classificacao = () => {
       try {
         const { data, error } = await supabase.rpc('classificacao_load_data')
         if (error) {
-          console.error('Error:', error)
+          console.error('Error:', error)x
           return
         }
         console.log('Supabase response:', data)
@@ -64,7 +64,7 @@ const Classificacao = () => {
             <div className="text-center relative text-lg font-semibold">
               {player.pontos}
               {player.ativo && (
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-apt-300 rounded-full" />
+                <div className="absolute left-1/2 -translate-x-1/2 mt-1 w-8 h-3 bg-apt-500 rounded" />
               )}
             </div>
           </div>
