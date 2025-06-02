@@ -6,15 +6,21 @@ import { supabase } from '../lib/supabase'
 const ConfiguracaoSorteio = () => {
   const location = useLocation()
   const etapaId = location.state?.etapaId
+  // Log para depuração da etapaId recebida
+  console.log('configetapa_sorteio.tsx - etapaId recebido:', etapaId)
   const [loading, setLoading] = useState(true)
   const [mesas, setMesas] = useState<{ [key: string]: { pos: number; jogador: string }[] }>({})
 
   useEffect(() => {
     const fetchSorteio = async () => {
-      if (!etapaId) return
+      if (!etapaId) {
+        console.log('fetchSorteio() - etapaId não definido, abortando chamada ao backend')
+        return
+      }
       setLoading(true)
+      console.log('fetchSorteio() chamado com etapaId:', etapaId)
       const { data, error } = await supabase.rpc('configetapa_sorteio', { p_etapa_id: etapaId })
-      console.log('Retorno de configetapa_sorteio:', data)
+      console.log('Retorno do supabase.rpc(configetapa_sorteio):', { data, error })
       if (error) {
         setMesas({})
       } else if (data && typeof data === 'object') {
