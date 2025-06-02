@@ -216,9 +216,26 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                   <Link to="/classificacao" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação ao vivo
                   </Link>
-                  <Link to="/financeiro" className="block py-1 text-apt-800 hover:text-apt-700">
-                    Financeiro {navData.etapa_nome}
-                  </Link>
+                  {/* Só mostra o Financeiro se financeiro === true */}
+                  {navData.financeiro === true && (
+                    <Link
+                      to="/financeiro"
+                      state={{ etapaId: navData.etapa_id }}
+                      className="block py-1 text-apt-800 hover:text-apt-700"
+                    >
+                      Financeiro {navData.etapa_nome}
+                    </Link>
+                  )}
+                  {/* Só mostra Mesas se financeiro === false */}
+                  {navData.financeiro === false && (
+                    <Link
+                      to="/mesas"
+                      state={{ etapaId: navData.etapa_id }}
+                      className="block py-1 text-apt-800 hover:text-apt-700"
+                    >
+                      Mesas
+                    </Link>
+                  )}
                   {isAdmin && (
                     <>
                       <div className="mt-12 mb-3">
