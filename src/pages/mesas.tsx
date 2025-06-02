@@ -17,11 +17,16 @@ const Mesas = () => {
       }
       setLoading(true)
       const { data, error } = await supabase.rpc('mesas_load', { p_etapa_id: etapaId })
-      let mesasData = {}
-      if (!error && Array.isArray(data) && data[0]?.mesas_load) {
-        mesasData = data[0].mesas_load
+      if (error) {
+        console.error('Erro ao chamar mesas_load:', error)
+        setMesas({})
+      } else if (data && Array.isArray(data) && data[0]?.mesas_load) {
+        setMesas(data[0].mesas_load)
+        console.log('Sucesso ao chamar mesas_load:', data[0].mesas_load)
+      } else {
+        setMesas({})
+        console.warn('mesas_load retornou formato inesperado:', data)
       }
-      setMesas(mesasData)
       setLoading(false)
     }
     fetchMesas()
