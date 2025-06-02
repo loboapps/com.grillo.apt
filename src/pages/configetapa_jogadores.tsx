@@ -219,7 +219,7 @@ const ConfiguracaoJogadores = () => {
               Adicionar Convidado
             </button>
             <button
-              onClick={() => navigate('/config_etapa/mesas', { 
+              onClick={() => navigate('/config/sorteio', { 
                 state: { etapaId }
               })}
               className={`w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900 ${!allPlayersConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
