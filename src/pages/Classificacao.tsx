@@ -62,9 +62,12 @@ const Classificacao = () => {
               {player.etapas}
             </div>
             <div className="text-center relative text-lg font-semibold">
-              {player.pontos}
-              {player.ativo && (
-                <div className="absolute left-1/2 -translate-x-1/2 mt-1 w-8 h-3 bg-apt-500 rounded" />
+              {player.ativo ? (
+                <span className="inline-block px-3 py-1 bg-apt-400 rounded text-white">
+                  {player.pontos}
+                </span>
+              ) : (
+                player.pontos
               )}
             </div>
           </div>
