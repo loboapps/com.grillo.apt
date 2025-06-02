@@ -5,18 +5,14 @@ import { supabase } from '../lib/supabase'
 
 const Mesas = () => {
   const location = useLocation()
-  const etapaId = location.state?.etapaId
+  // Não precisa de etapaId, pois a função mesas_load não espera parâmetro
   const [loading, setLoading] = useState(true)
   const [mesas, setMesas] = useState<{ [key: string]: { pos: number; jogador: string }[] }>({})
 
   useEffect(() => {
     const fetchMesas = async () => {
-      if (!etapaId) {
-        setLoading(false)
-        return
-      }
       setLoading(true)
-      const { data, error } = await supabase.rpc('mesas_load', { p_etapa_id: etapaId })
+      const { data, error } = await supabase.rpc('mesas_load')
       if (error) {
         console.error('Erro ao chamar mesas_load:', error)
         setMesas({})
@@ -30,7 +26,7 @@ const Mesas = () => {
       setLoading(false)
     }
     fetchMesas()
-  }, [etapaId])
+  }, [])
 
   const renderTable = (mesaKey: string, jogadores: { pos: number; jogador: string }[]) => (
     <div className="flex-1" key={mesaKey}>
