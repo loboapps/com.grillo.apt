@@ -17,6 +17,8 @@ const ConfiguracaoJogadores = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const etapaId = location.state?.etapaId
+  // Log para depuração da etapaId recebida
+  console.log('configetapa_jogadores.tsx - etapaId recebido:', etapaId)
   const { guests, addGuest, updateGuest, removeGuest } = useGuests()
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,26 +26,34 @@ const ConfiguracaoJogadores = () => {
   const [confirmedGuests, setConfirmedGuests] = useState<string[]>([])
 
   // Carrega jogadores e convidados
-const fetchPlayers = async () => {
-  setLoading(true)
-  const { data, error } = await supabase.rpc('configetapa_jogadores_load', { p_etapa_id: etapaId })
-  console.log('JSON recebido do backend:', data)
-  
-  if (error) {
-    setToast({ message: 'Erro ao carregar jogadores', type: 'error' })
+  const fetchPlayers = async () => {
+    setLoading(true)
+    console.log('fetchPlayers() chamado com etapaId:', etapaId)
+    if (!etapaId) {
+      console.log('fetchPlayers() - etapaId não definido, abortando chamada ao backend')
+      setLoading(false)
+      return
+    }
+    try {
+      const { data, error } = await supabase.rpc('configetapa_jogadores_load', { p_etapa_id: etapaId })
+      console.log('Retorno do supabase.rpc(configetapa_jogadores_load):', { data, error })
+      if (error) {
+        setToast({ message: 'Erro ao carregar jogadores', type: 'error' })
+        setLoading(false)
+        return
+      }
+      const jogadores = Array.isArray(data) ? data : []
+      setPlayers(jogadores.filter((p: any) => p.id_jogador))
+      setConfirmedGuests(jogadores.filter((p: any) => !p.id_jogador).map((g: any) => g.nome))
+    } catch (err) {
+      console.error('Erro inesperado em fetchPlayers:', err)
+      setToast({ message: 'Erro inesperado ao carregar jogadores', type: 'error' })
+    }
     setLoading(false)
-    return
   }
-  
-  // A resposta já é o array direto de jogadores
-  const jogadores = Array.isArray(data) ? data : []
-  
-  setPlayers(jogadores.filter((p: any) => p.id_jogador))
-  setConfirmedGuests(jogadores.filter((p: any) => !p.id_jogador).map((g: any) => g.nome))
-  setLoading(false)
-}
 
   useEffect(() => {
+    console.log('useEffect disparado - etapaId:', etapaId)
     if (etapaId) fetchPlayers()
   }, [etapaId])
 
