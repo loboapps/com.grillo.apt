@@ -19,7 +19,7 @@ const Classificacao = () => {
       try {
         const { data, error } = await supabase.rpc('classificacao_load_data')
         if (error) {
-          console.error('Error:', error)x
+          console.error('Error:', error)
           return
         }
         console.log('Supabase response:', data)
