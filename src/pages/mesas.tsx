@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Nav from '../components/Nav'
 import { useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
