@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Nav from '../components/Nav'
 import { useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
@@ -16,6 +16,9 @@ const Mesas = () => {
       if (error) {
         console.error('Erro ao chamar mesas_load:', error)
         setMesas({})
+      } else if (data && typeof data === 'object' && !Array.isArray(data)) {
+        setMesas(data)
+        console.log('Sucesso ao chamar mesas_load:', data)
       } else if (data && Array.isArray(data) && data[0]?.mesas_load) {
         setMesas(data[0].mesas_load)
         console.log('Sucesso ao chamar mesas_load:', data[0].mesas_load)
