@@ -48,6 +48,7 @@ const ManageEliminacao = () => {
     const { data, error } = await supabase.rpc('manageetapa_eliminacao', {
       p_etapa_id: etapaId,
       p_jogador_id: player.jogador_id,
+      p_nome: player.nome,
       p_acao: 'rebuy'
     })
     if (error || data?.success === false) {
@@ -70,6 +71,7 @@ const ManageEliminacao = () => {
     const { data, error } = await supabase.rpc('manageetapa_eliminacao', {
       p_etapa_id: etapaId,
       p_jogador_id: modal.player.jogador_id,
+      p_nome: modal.player.nome,
       p_acao: 'eliminacao'
     })
     if (error || data?.success === false) {
