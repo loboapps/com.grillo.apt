@@ -112,9 +112,9 @@ const ManageEliminacao = () => {
                   {/* Rebuy */}
                   <button
                     onClick={() => handleRebuy(player)}
-                    disabled={player.rebuys >= MAX_REBUYS || !player.jogador_id}
+                    disabled={player.rebuys >= MAX_REBUYS}
                     className={`w-[80px] h-10 border border-black rounded flex items-center justify-center ${
-                      player.rebuys >= MAX_REBUYS || !player.jogador_id ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'hover:bg-gray-100'
+                      player.rebuys >= MAX_REBUYS ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'hover:bg-gray-100'
                     }`}
                   >
                     <icons.RotateCw className="w-5 h-5 mr-2" />
@@ -123,10 +123,8 @@ const ManageEliminacao = () => {
                   {/* Eliminar */}
                   <button
                     onClick={() => handleEliminate(player)}
-                    disabled={!player.jogador_id}
-                    className={`w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100 ${
-                      !player.jogador_id ? 'bg-gray-200 cursor-not-allowed opacity-50' : ''
-                    }`}
+                    // Nunca desabilita o botão de eliminação
+                    className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100"
                   >
                     <icons.BadgeMinus className="text-red-500 w-6 h-6" />
                   </button>
