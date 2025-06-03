@@ -21,24 +21,24 @@ const ManageEliminacao = () => {
   const [modal, setModal] = useState<{ open: boolean; player: Player | null }>({ open: false, player: null })
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
-  const fetchPlayers = async () => {
-    setLoading(true)
-    if (!etapaId) {
-      setPlayers([])
-      setLoading(false)
-      return
-    }
-    try {
-      const { data, error } = await supabase.rpc('manageetapa_eliminacao_load', { p_etapa_id: etapaId })
-      const jogadores: Player[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
-      setPlayers(jogadores)
-    } catch (err) {
-      setPlayers([])
-    }
-    setLoading(false)
-  }
-
   useEffect(() => {
+    const fetchPlayers = async () => {
+      setLoading(true)
+      if (!etapaId) {
+        setPlayers([])
+        setLoading(false)
+        return
+      }
+      try {
+        const { data, error } = await supabase.rpc('manageetapa_eliminacao_load', { p_etapa_id: etapaId })
+        const jogadores: Player[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
+        setPlayers(jogadores)
+        console.log('manageetapa_eliminacao_load sucesso:', jogadores)
+      } catch (err) {
+        setPlayers([])
+      }
+      setLoading(false)
+    }
     fetchPlayers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [etapaId])
