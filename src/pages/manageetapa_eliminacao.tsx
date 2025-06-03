@@ -19,51 +19,86 @@ const ManageEliminacao = () => {
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<{ open: boolean; player: Player | null }>({ open: false, player: null })
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+
+  const fetchPlayers = async () => {
+    setLoading(true)
+    if (!etapaId) {
+      setPlayers([])
+      setLoading(false)
+      return
+    }
+    try {
+      const { data, error } = await supabase.rpc('manageetapa_eliminacao_load', { p_etapa_id: etapaId })
+      const jogadores: Player[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
+      setPlayers(jogadores)
+    } catch (err) {
+      setPlayers([])
+    }
+    setLoading(false)
+  }
 
   useEffect(() => {
-    const fetchPlayers = async () => {
-      setLoading(true)
-      if (!etapaId) {
-        setPlayers([])
-        setLoading(false)
-        return
-      }
-      try {
-        const { data, error } = await supabase.rpc('manageetapa_eliminacao_load', { p_etapa_id: etapaId })
-        // Corrige para acessar data.data se necessário
-        const jogadores: Player[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
-        setPlayers(jogadores)
-      } catch (err) {
-        setPlayers([])
-      }
-      setLoading(false)
-    }
     fetchPlayers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [etapaId])
 
-  const handleRebuy = (player: Player) => {
-    // Aqui você pode adicionar lógica para registrar o rebuy no backend
-    // Após sucesso, recarregue os dados
-    // Exemplo:
-    // await supabase.rpc('manageetapa_eliminacao_rebuy', { p_etapa_id: player.etapa_id, p_jogador_id: player.jogador_id })
-    // fetchPlayers()
+  const handleRebuy = async (player: Player) => {
+    if (!etapaId || !player.jogador_id) return
+    const { data, error } = await supabase.rpc('manageetapa_eliminacao', {
+      p_etapa_id: etapaId,
+      p_jogador_id: player.jogador_id,
+      p_acao: 'rebuy'
+    })
+    if (error || data?.success === false) {
+      setToast({ message: data?.error || error?.message || 'Erro ao registrar rebuy', type: 'error' })
+    } else {
+      setToast({ message: data?.message || 'Rebuy realizado com sucesso', type: 'success' })
+      fetchPlayers()
+    }
   }
 
   const handleEliminate = (player: Player) => {
     setModal({ open: true, player })
   }
 
-  const confirmEliminate = () => {
-    // Aqui você pode adicionar lógica para eliminar o jogador (chamada backend)
+  const confirmEliminate = async () => {
+    if (!modal.player || !etapaId || !modal.player.jogador_id) {
+      setModal({ open: false, player: null })
+      return
+    }
+    const { data, error } = await supabase.rpc('manageetapa_eliminacao', {
+      p_etapa_id: etapaId,
+      p_jogador_id: modal.player.jogador_id,
+      p_acao: 'eliminacao'
+    })
+    if (error || data?.success === false) {
+      setToast({ message: data?.error || error?.message || 'Erro ao eliminar jogador', type: 'error' })
+    } else {
+      setToast({ message: data?.message || 'Eliminação realizada com sucesso', type: 'success' })
+      fetchPlayers()
+    }
     setModal({ open: false, player: null })
-    // Após sucesso, recarregue os dados
-    // fetchPlayers()
   }
 
   return (
     <div className="min-h-screen bg-apt-100">
       <Nav title="Eliminação e Rebuy" />
       <div className="px-4 py-6">
+        {toast && (
+          <div>
+            {/* Toast */}
+            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+              <div className={`px-4 py-2 rounded ${
+                toast.type === 'success' 
+                  ? 'border border-apt-900 bg-apt-100 text-apt-800' 
+                  : 'border border-apt-700 bg-apt-100 text-apt-600'
+              }`}>
+                {toast.message}
+              </div>
+            </div>
+          </div>
+        )}
         {loading ? (
           <div>Carregando jogadores...</div>
         ) : (
@@ -75,9 +110,9 @@ const ManageEliminacao = () => {
                   {/* Rebuy */}
                   <button
                     onClick={() => handleRebuy(player)}
-                    disabled={player.rebuys >= MAX_REBUYS}
+                    disabled={player.rebuys >= MAX_REBUYS || !player.jogador_id}
                     className={`w-[80px] h-10 border border-black rounded flex items-center justify-center ${
-                      player.rebuys >= MAX_REBUYS ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'hover:bg-gray-100'
+                      player.rebuys >= MAX_REBUYS || !player.jogador_id ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'hover:bg-gray-100'
                     }`}
                   >
                     <icons.RotateCw className="w-5 h-5 mr-2" />
@@ -86,7 +121,10 @@ const ManageEliminacao = () => {
                   {/* Eliminar */}
                   <button
                     onClick={() => handleEliminate(player)}
-                    className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100"
+                    disabled={!player.jogador_id}
+                    className={`w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100 ${
+                      !player.jogador_id ? 'bg-gray-200 cursor-not-allowed opacity-50' : ''
+                    }`}
                   >
                     <icons.BadgeMinus className="text-red-500 w-6 h-6" />
                   </button>
