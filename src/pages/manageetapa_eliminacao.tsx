@@ -21,7 +21,7 @@ const ManageEliminacao = () => {
   const [modal, setModal] = useState<{ open: boolean; player: Player | null }>({ open: false, player: null })
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
-  // Defina fetchPlayers com useCallback para garantir escopo correto
+  // fetchPlayers com useCallback para garantir escopo correto
   const fetchPlayers = useCallback(async () => {
     setLoading(true)
     if (!etapaId) {
@@ -46,10 +46,12 @@ const ManageEliminacao = () => {
   }, [etapaId, fetchPlayers])
 
   const handleRebuy = async (player: Player) => {
-    if (!etapaId || !player.jogador_id) return
+    if (!etapaId) return
+    setPlayers([]) // Limpa a lista para mostrar "processando"
+    setLoading(true)
     const { data, error } = await supabase.rpc('manageetapa_eliminacao', {
       p_etapa_id: etapaId,
-      p_jogador_id: player.jogador_id,
+      p_jogador_id: player.jogador_id ?? null,
       p_nome: player.nome,
       p_acao: 'rebuy'
     })
@@ -57,8 +59,8 @@ const ManageEliminacao = () => {
       setToast({ message: data?.error || error?.message || 'Erro ao registrar rebuy', type: 'error' })
     } else {
       setToast({ message: data?.message || 'Rebuy realizado com sucesso', type: 'success' })
-      fetchPlayers()
     }
+    fetchPlayers()
   }
 
   const handleEliminate = (player: Player) => {
@@ -66,13 +68,15 @@ const ManageEliminacao = () => {
   }
 
   const confirmEliminate = async () => {
-    if (!modal.player || !etapaId || !modal.player.jogador_id) {
+    if (!modal.player || !etapaId) {
       setModal({ open: false, player: null })
       return
     }
+    setPlayers([]) // Limpa a lista para mostrar "processando"
+    setLoading(true)
     const { data, error } = await supabase.rpc('manageetapa_eliminacao', {
       p_etapa_id: etapaId,
-      p_jogador_id: modal.player.jogador_id,
+      p_jogador_id: modal.player.jogador_id ?? null,
       p_nome: modal.player.nome,
       p_acao: 'eliminacao'
     })
@@ -80,9 +84,9 @@ const ManageEliminacao = () => {
       setToast({ message: data?.error || error?.message || 'Erro ao eliminar jogador', type: 'error' })
     } else {
       setToast({ message: data?.message || 'Eliminação realizada com sucesso', type: 'success' })
-      fetchPlayers()
     }
     setModal({ open: false, player: null })
+    fetchPlayers()
   }
 
   return (
@@ -104,7 +108,7 @@ const ManageEliminacao = () => {
           </div>
         )}
         {loading ? (
-          <div>Carregando jogadores...</div>
+          <div>Processando...</div>
         ) : (
           <div className="space-y-4">
             {players.map((player, index) => (
@@ -125,7 +129,6 @@ const ManageEliminacao = () => {
                   {/* Eliminar */}
                   <button
                     onClick={() => handleEliminate(player)}
-                    // Nunca desabilita o botão de eliminação
                     className="w-10 h-10 border border-black rounded flex items-center justify-center hover:bg-gray-100"
                   >
                     <icons.BadgeMinus className="text-red-500 w-6 h-6" />
