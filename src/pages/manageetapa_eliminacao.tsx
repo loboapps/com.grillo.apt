@@ -8,7 +8,7 @@ const MAX_REBUYS = 2
 
 interface Player {
   etapa_id: string
-  jogador_id: string
+  jogador_id: string | null
   nome: string
   rebuys: number
 }
@@ -30,16 +30,10 @@ const ManageEliminacao = () => {
       }
       try {
         const { data, error } = await supabase.rpc('manageetapa_eliminacao_load', { p_etapa_id: etapaId })
-        console.log('manageetapa_eliminacao_load retorno:', { data, error })
-        if (error) {
-          setPlayers([])
-        } else if (Array.isArray(data)) {
-          setPlayers(data)
-        } else {
-          setPlayers([])
-        }
+        // Corrige para acessar data.data se necessário
+        const jogadores: Player[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
+        setPlayers(jogadores)
       } catch (err) {
-        console.error('Erro inesperado em fetchPlayers:', err)
         setPlayers([])
       }
       setLoading(false)
@@ -75,7 +69,7 @@ const ManageEliminacao = () => {
         ) : (
           <div className="space-y-4">
             {players.map((player, index) => (
-              <div key={player.jogador_id} className={`flex items-center ${index < players.length - 1 ? 'border-b' : ''} border-apt-300 pb-2`}>
+              <div key={player.nome + (player.jogador_id ?? '')} className={`flex items-center ${index < players.length - 1 ? 'border-b' : ''} border-apt-300 pb-2`}>
                 <span className="text-apt-800 flex-1">{player.nome}</span>
                 <div className="flex gap-2 min-w-[120px] justify-end">
                   {/* Rebuy */}
