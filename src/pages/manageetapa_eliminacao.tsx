@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import Nav from '../components/Nav'
 import { icons } from '../utils/icons'
 import { useLocation } from 'react-router-dom'
@@ -21,27 +21,29 @@ const ManageEliminacao = () => {
   const [modal, setModal] = useState<{ open: boolean; player: Player | null }>({ open: false, player: null })
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
-  useEffect(() => {
-    const fetchPlayers = async () => {
-      setLoading(true)
-      if (!etapaId) {
-        setPlayers([])
-        setLoading(false)
-        return
-      }
-      try {
-        const { data, error } = await supabase.rpc('manageetapa_eliminacao_load', { p_etapa_id: etapaId })
-        const jogadores: Player[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
-        setPlayers(jogadores)
-        console.log('manageetapa_eliminacao_load sucesso:', jogadores)
-      } catch (err) {
-        setPlayers([])
-      }
+  // Defina fetchPlayers com useCallback para garantir escopo correto
+  const fetchPlayers = useCallback(async () => {
+    setLoading(true)
+    if (!etapaId) {
+      setPlayers([])
       setLoading(false)
+      return
     }
+    try {
+      const { data, error } = await supabase.rpc('manageetapa_eliminacao_load', { p_etapa_id: etapaId })
+      const jogadores: Player[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
+      setPlayers(jogadores)
+      console.log('manageetapa_eliminacao_load sucesso:', jogadores)
+    } catch (err) {
+      setPlayers([])
+    }
+    setLoading(false)
+  }, [etapaId])
+
+  useEffect(() => {
     fetchPlayers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [etapaId])
+  }, [etapaId, fetchPlayers])
 
   const handleRebuy = async (player: Player) => {
     if (!etapaId || !player.jogador_id) return
