@@ -213,65 +213,91 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
               {/* status: gerenciamento */}
               {navData?.status === 'gerenciamento' && (
                 <>
+                  {/* Comum */}
                   <Link to="/classificacao" className="block py-1 text-apt-800 hover:text-apt-700">
                     Classificação ao vivo
                   </Link>
-                  {/* Só mostra o Financeiro se financeiro === true */}
-                  {navData.financeiro === true && (
-                    <Link
-                      to="/financeiro"
-                      state={{ etapaId: navData.etapa_id }}
-                      className="block py-1 text-apt-800 hover:text-apt-700"
-                    >
-                      Financeiro {navData.etapa_nome}
-                    </Link>
-                  )}
-                  {/* Só mostra Mesas se financeiro === false */}
-                  {navData.financeiro === false && (
-                    <Link
-                      to="/mesas"
-                      state={{ etapaId: navData.etapa_id }}
-                      className="block py-1 text-apt-800 hover:text-apt-700"
-                    >
-                      Mesas
-                    </Link>
-                  )}
-                  {isAdmin && (
+                  {navData.intervalo === true ? (
                     <>
-                      <div className="mt-12 mb-3">
-                        <div className="flex items-center justify-center">
-                          <div className="w-full border-t border-apt-300"></div>
-                        </div>
-                        <div className="flex justify-center my-2">
-                          <span className="bg-apt-100 px-2 text-xs font-medium text-apt-700 uppercase tracking-widest">
-                            ADMIN
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-center">
-                          <div className="w-full border-t border-apt-300"></div>
-                        </div>
-                      </div>
-                      <Link 
-                        to="/manage/jogador" 
+                      <Link
+                        to="/financeiro"
                         state={{ etapaId: navData.etapa_id }}
                         className="block py-1 text-apt-800 hover:text-apt-700"
                       >
-                        Adicionar Jogador
+                        Financeiro {navData.etapa_nome}
                       </Link>
-                      <Link 
-                        to="/manage/eliminacao" 
+                      {isAdmin && (
+                        <>
+                          <div className="mt-12 mb-3">
+                            <div className="flex items-center justify-center">
+                              <div className="w-full border-t border-apt-300"></div>
+                            </div>
+                            <div className="flex justify-center my-2">
+                              <span className="bg-apt-100 px-2 text-xs font-medium text-apt-700 uppercase tracking-widest">
+                                ADMIN
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-center">
+                              <div className="w-full border-t border-apt-300"></div>
+                            </div>
+                          </div>
+                          <Link 
+                            to="/manage/eliminacao" 
+                            state={{ etapaId: navData.etapa_id }}
+                            className="block py-1 text-apt-800 hover:text-apt-700"
+                          >
+                            Eliminação
+                          </Link>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        to="/mesas"
                         state={{ etapaId: navData.etapa_id }}
                         className="block py-1 text-apt-800 hover:text-apt-700"
                       >
-                        Rebuy e Eliminação
+                        Lugares
                       </Link>
-                      <Link 
-                        to="/manage/financeiro" 
-                        state={{ etapaId: navData.etapa_id }}
-                        className="block py-1 text-apt-800 hover:text-apt-700"
-                      >
-                        Financeiro
-                      </Link>
+                      {isAdmin && (
+                        <>
+                          <div className="mt-12 mb-3">
+                            <div className="flex items-center justify-center">
+                              <div className="w-full border-t border-apt-300"></div>
+                            </div>
+                            <div className="flex justify-center my-2">
+                              <span className="bg-apt-100 px-2 text-xs font-medium text-apt-700 uppercase tracking-widest">
+                                ADMIN
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-center">
+                              <div className="w-full border-t border-apt-300"></div>
+                            </div>
+                          </div>
+                          <Link 
+                            to="/manage/jogador" 
+                            state={{ etapaId: navData.etapa_id }}
+                            className="block py-1 text-apt-800 hover:text-apt-700"
+                          >
+                            Adicionar Jogador
+                          </Link>
+                          <Link 
+                            to="/manage/eliminacao" 
+                            state={{ etapaId: navData.etapa_id }}
+                            className="block py-1 text-apt-800 hover:text-apt-700"
+                          >
+                            Eliminação & Rebuy
+                          </Link>
+                          <Link 
+                            to="/manage/financeiro" 
+                            state={{ etapaId: navData.etapa_id }}
+                            className="block py-1 text-apt-800 hover:text-apt-700"
+                          >
+                            Premiação
+                          </Link>
+                        </>
+                      )}
                     </>
                   )}
                 </>

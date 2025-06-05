@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Nav from '../components/Nav'
 import { supabase } from '../lib/supabase'
 
 const ManageFinanceiro = () => {
   const location = useLocation()
+  const navigate = useNavigate()
   const etapaId = location.state?.etapaId
 
   // Debug log
@@ -78,7 +79,8 @@ const ManageFinanceiro = () => {
         p_premio_4th: premios[3],
       })
       console.log('manageetapa_premiacao retorno:', { data: resp, error })
-      // Aqui você pode mostrar um toast ou feedback ao usuário se desejar
+      // Redireciona após o envio
+      window.location.href = 'https://apt-com-grillo.vercel.app/manage/eliminacao'
     } catch (err) {
       console.error('Erro ao confirmar premiação:', err)
     }
