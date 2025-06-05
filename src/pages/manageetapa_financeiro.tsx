@@ -136,7 +136,13 @@ const ManageFinanceiro = () => {
         <div className="grid grid-cols-2 gap-y-2 text-apt-800">
           {premiacao?.map((p: any, i: number) => (
             <React.Fragment key={i}>
-              <div>{p.posicao}º Lugar</div>
+              <div>
+                {p.posicao}º Lugar
+                {typeof p.porcentagem === 'number' && (
+                  <> ({p.porcentagem}%)
+                  </>
+                )}
+              </div>
               <div className="flex items-center justify-end">
                 <span className="mr-2">R$</span>
                 <input
