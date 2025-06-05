@@ -17,6 +17,7 @@ const ManageEliminacao = () => {
   const location = useLocation()
   const etapaId = location.state?.etapaId
   const [players, setPlayers] = useState<Player[]>([])
+  const [intervalo, setIntervalo] = useState<boolean>(false)
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<{ open: boolean; player: Player | null }>({ open: false, player: null })
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
@@ -31,11 +32,21 @@ const ManageEliminacao = () => {
     }
     try {
       const { data, error } = await supabase.rpc('manageetapa_eliminacao_load', { p_etapa_id: etapaId })
-      const jogadores: Player[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
+      // Suporta tanto retorno direto quanto { data: [...], intervalo: true }
+      let jogadores: Player[] = []
+      let intervaloFlag = false
+      if (data?.data && Array.isArray(data.data)) {
+        jogadores = data.data
+        intervaloFlag = !!data.intervalo
+      } else if (Array.isArray(data)) {
+        jogadores = data
+      }
       setPlayers(jogadores)
-      console.log('manageetapa_eliminacao_load sucesso:', jogadores)
+      setIntervalo(intervaloFlag)
+      console.log('manageetapa_eliminacao_load sucesso:', jogadores, 'intervalo:', intervaloFlag)
     } catch (err) {
       setPlayers([])
+      setIntervalo(false)
     }
     setLoading(false)
     // Toast desaparece após 10s
@@ -126,9 +137,9 @@ const ManageEliminacao = () => {
                   {/* Rebuy */}
                   <button
                     onClick={() => handleRebuy(player)}
-                    disabled={player.rebuys >= MAX_REBUYS}
+                    disabled={intervalo || player.rebuys >= MAX_REBUYS}
                     className={`w-[80px] h-10 border border-black rounded flex items-center justify-center ${
-                      player.rebuys >= MAX_REBUYS ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'hover:bg-gray-100'
+                      intervalo || player.rebuys >= MAX_REBUYS ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'hover:bg-gray-100'
                     }`}
                   >
                     <icons.RotateCw className="w-5 h-5 mr-2" />
