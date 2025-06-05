@@ -16,7 +16,9 @@ const ManageFinanceiro = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log('fetchData() chamado em manageetapa_financeiro')
       if (!etapaId) {
+        console.log('etapaId não definido')
         setLoading(false)
         return
       }
@@ -139,8 +141,7 @@ const ManageFinanceiro = () => {
               <div>
                 {p.posicao}º Lugar
                 {typeof p.porcentagem === 'number' && (
-                  <> ({p.porcentagem}%)
-                  </>
+                  <span className="ml-1 text-xs text-apt-600">({p.porcentagem}%)</span>
                 )}
               </div>
               <div className="flex items-center justify-end">

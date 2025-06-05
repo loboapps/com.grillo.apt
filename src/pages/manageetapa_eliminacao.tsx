@@ -38,7 +38,11 @@ const ManageEliminacao = () => {
       setPlayers([])
     }
     setLoading(false)
-  }, [etapaId])
+    // Toast desaparece após 10s
+    if (toast) {
+      setTimeout(() => setToast(null), 10000)
+    }
+  }, [etapaId, toast])
 
   useEffect(() => {
     fetchPlayers()
@@ -57,8 +61,10 @@ const ManageEliminacao = () => {
     })
     if (error || data?.success === false) {
       setToast({ message: data?.error || error?.message || 'Erro ao registrar rebuy', type: 'error' })
+      setTimeout(() => setToast(null), 10000)
     } else {
       setToast({ message: data?.message || 'Rebuy realizado com sucesso', type: 'success' })
+      setTimeout(() => setToast(null), 10000)
     }
     fetchPlayers()
   }
@@ -82,8 +88,10 @@ const ManageEliminacao = () => {
     })
     if (error || data?.success === false) {
       setToast({ message: data?.error || error?.message || 'Erro ao eliminar jogador', type: 'error' })
+      setTimeout(() => setToast(null), 10000)
     } else {
       setToast({ message: data?.message || 'Eliminação realizada com sucesso', type: 'success' })
+      setTimeout(() => setToast(null), 10000)
     }
     setModal({ open: false, player: null })
     fetchPlayers()
