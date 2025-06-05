@@ -12,6 +12,7 @@ const ManageFinanceiro = () => {
 
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any>(null)
+  const [premiacaoInputs, setPremiacaoInputs] = useState<{ [key: number]: string }>({})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +27,14 @@ const ManageFinanceiro = () => {
         setData(null)
       } else if (resp && typeof resp === 'object') {
         setData(resp)
+        // Inicializa os inputs da premiação
+        if (resp.premiacao && Array.isArray(resp.premiacao)) {
+          const inputs: { [key: number]: string } = {}
+          resp.premiacao.forEach((p: any, i: number) => {
+            inputs[i] = p.premio?.toFixed(2) ?? ''
+          })
+          setPremiacaoInputs(inputs)
+        }
       } else {
         setData(null)
       }
@@ -33,6 +42,13 @@ const ManageFinanceiro = () => {
     }
     fetchData()
   }, [etapaId])
+
+  const handlePremiacaoInput = (index: number, value: string) => {
+    // Permite apenas números e ponto
+    if (/^[0-9]*\.?[0-9]*$/.test(value)) {
+      setPremiacaoInputs(prev => ({ ...prev, [index]: value }))
+    }
+  }
 
   const renderSection = (title: string, smallMargin?: boolean) => (
     <div className={`relative ${smallMargin ? 'my-4' : 'my-8'}`}>
@@ -72,6 +88,14 @@ const ManageFinanceiro = () => {
   const custos = data.custos_etapa
   const mesaFinal = data.mesa_final
   const campeao = data.campeao
+
+  // Novos totais
+  const totais = {
+    arrecadacao: data.arrecadacao,
+    despesas: data.custos_etapa_total,
+    totalEntradas: data.total_entradas,
+    premiacao: data.premiacao_total
+  }
 
   return (
     <div className="min-h-screen bg-apt-100">
@@ -113,7 +137,18 @@ const ManageFinanceiro = () => {
           {premiacao?.map((p: any, i: number) => (
             <React.Fragment key={i}>
               <div>{p.posicao}º Lugar</div>
-              <div className="text-right">R${p.premio.toFixed(2)}</div>
+              <div className="flex items-center justify-end">
+                <span className="mr-2">R$</span>
+                <input
+                  type="text"
+                  value={premiacaoInputs[i] ?? ''}
+                  onChange={e => handlePremiacaoInput(i, e.target.value)}
+                  className="w-24 p-2 border rounded text-right"
+                  inputMode="decimal"
+                  pattern="[0-9]*\.?[0-9]*"
+                  maxLength={10}
+                />
+              </div>
             </React.Fragment>
           ))}
         </div>
@@ -143,6 +178,19 @@ const ManageFinanceiro = () => {
           <div>Campão</div>
           <div className="text-right pr-1">R${campeao?.etapa?.toFixed(2)}</div>
           <div className="text-right">R${campeao?.torneio?.toFixed(2)}</div>
+        </div>
+
+        {/* Totais */}
+        {renderSection('Totais')}
+        <div className="grid grid-cols-2 gap-y-2 text-apt-800">
+          <div>Arrecadação</div>
+          <div className="text-right">R${totais.arrecadacao?.toFixed(2)}</div>
+          <div>Despesas</div>
+          <div className="text-right">R${totais.despesas?.toFixed(2)}</div>
+          <div>Total Entradas</div>
+          <div className="text-right">{totais.totalEntradas}</div>
+          <div>Premiação</div>
+          <div className="text-right">R${totais.premiacao?.toFixed(2)}</div>
         </div>
 
         {/* Botão Confirmar Premiação */}
