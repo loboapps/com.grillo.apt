@@ -45,10 +45,42 @@ const ManageFinanceiro = () => {
     fetchData()
   }, [etapaId])
 
+  // Atualiza o valor do input apenas se o usuário alterar manualmente
   const handlePremiacaoInput = (index: number, value: string) => {
     // Permite apenas números e ponto
     if (/^[0-9]*\.?[0-9]*$/.test(value)) {
-      setPremiacaoInputs(prev => ({ ...prev, [index]: value }))
+      setPremiacaoInputs(prev => ({
+        ...prev,
+        [index]: value
+      }))
+    }
+  }
+
+  // Retorna o valor do input se foi alterado, senão o valor original do JSON
+  const getPremiacaoInputValue = (i: number, p: any) => {
+    return premiacaoInputs[i] !== undefined
+      ? premiacaoInputs[i]
+      : (typeof p.premio === 'number' ? p.premio.toFixed(2) : '')
+  }
+
+  const handleConfirmarPremiacao = async () => {
+    if (!etapaId) return
+    // Monta os valores dos inputs (garante float, 0 se vazio)
+    const premios = premiacao.map((p: any, i: number) =>
+      parseFloat(getPremiacaoInputValue(i, p) || '0')
+    )
+    try {
+      const { data: resp, error } = await supabase.rpc('manageetapa_premiacao', {
+        p_etapa_id: etapaId,
+        p_premio_1st: premios[0],
+        p_premio_2nd: premios[1],
+        p_premio_3rd: premios[2],
+        p_premio_4th: premios[3],
+      })
+      console.log('manageetapa_premiacao retorno:', { data: resp, error })
+      // Aqui você pode mostrar um toast ou feedback ao usuário se desejar
+    } catch (err) {
+      console.error('Erro ao confirmar premiação:', err)
     }
   }
 
@@ -148,7 +180,7 @@ const ManageFinanceiro = () => {
                 <span className="mr-2">R$</span>
                 <input
                   type="text"
-                  value={premiacaoInputs[i] ?? ''}
+                  value={getPremiacaoInputValue(i, p)}
                   onChange={e => handlePremiacaoInput(i, e.target.value)}
                   className="w-24 p-2 border rounded text-right"
                   inputMode="decimal"
@@ -204,7 +236,7 @@ const ManageFinanceiro = () => {
         <div className="mt-8">
           <button
             className="w-full bg-apt-500 text-apt-100 p-3 rounded hover:bg-apt-300 hover:text-apt-900"
-            // onClick={...} // Adicione a lógica de confirmação se necessário
+            onClick={handleConfirmarPremiacao}
           >
             Confirmar Premiação
           </button>
