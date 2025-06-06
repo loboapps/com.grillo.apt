@@ -79,8 +79,8 @@ const ManageFinanceiro = () => {
         p_premio_4th: premios[3],
       })
       console.log('manageetapa_premiacao retorno:', { data: resp, error })
-      // Redireciona após o envio
-      window.location.href = 'https://apt-com-grillo.vercel.app/manage/eliminacao'
+      // Redireciona após o envio, passando etapaId por state
+      navigate('/manage/eliminacao', { state: { etapaId } })
     } catch (err) {
       console.error('Erro ao confirmar premiação:', err)
     }

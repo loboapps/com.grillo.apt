@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import Nav from '../components/Nav'
 import { icons } from '../utils/icons'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const MAX_REBUYS = 2
@@ -15,12 +15,13 @@ interface Player {
 
 const ManageEliminacao = () => {
   const location = useLocation()
+  const navigate = useNavigate()
   const etapaId = location.state?.etapaId
   const [players, setPlayers] = useState<Player[]>([])
   const [intervalo, setIntervalo] = useState<boolean>(false)
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<{ open: boolean; player: Player | null }>({ open: false, player: null })
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; etapa_finalizada?: boolean; vencedor?: string } | null>(null)
 
   // fetchPlayers com useCallback para garantir escopo correto
   const fetchPlayers = useCallback(async () => {
@@ -32,7 +33,6 @@ const ManageEliminacao = () => {
     }
     try {
       const { data, error } = await supabase.rpc('manageetapa_eliminacao_load', { p_etapa_id: etapaId })
-      // Suporta tanto retorno direto quanto { data: [...], intervalo: true }
       let jogadores: Player[] = []
       let intervaloFlag = false
       if (data?.data && Array.isArray(data.data)) {
@@ -50,7 +50,7 @@ const ManageEliminacao = () => {
     }
     setLoading(false)
     // Toast desaparece após 10s
-    if (toast) {
+    if (toast && !toast.etapa_finalizada) {
       setTimeout(() => setToast(null), 10000)
     }
   }, [etapaId, toast])
@@ -100,6 +100,14 @@ const ManageEliminacao = () => {
     if (error || data?.success === false) {
       setToast({ message: data?.error || error?.message || 'Erro ao eliminar jogador', type: 'error' })
       setTimeout(() => setToast(null), 10000)
+    } else if (data?.etapa_finalizada) {
+      setToast({
+        message: data?.message,
+        type: 'success',
+        etapa_finalizada: true,
+        vencedor: data?.vencedor
+      })
+      // Não fecha o toast automaticamente
     } else {
       setToast({ message: data?.message || 'Eliminação realizada com sucesso', type: 'success' })
       setTimeout(() => setToast(null), 10000)
@@ -112,9 +120,9 @@ const ManageEliminacao = () => {
     <div className="min-h-screen bg-apt-100">
       <Nav title="Eliminação e Rebuy" />
       <div className="px-4 py-6">
-        {toast && (
+        {/* Toast padrão */}
+        {toast && !toast.etapa_finalizada && (
           <div>
-            {/* Toast */}
             <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
               <div className={`px-4 py-2 rounded ${
                 toast.type === 'success' 
@@ -123,6 +131,21 @@ const ManageEliminacao = () => {
               }`}>
                 {toast.message}
               </div>
+            </div>
+          </div>
+        )}
+        {/* Toast de etapa finalizada */}
+        {toast && toast.etapa_finalizada && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+            <div className="bg-apt-100 rounded-lg shadow-lg p-8 w-full max-w-md flex flex-col items-center">
+              <div className="text-4xl font-extrabold text-apt-500 mb-2 text-center">Parabéns</div>
+              <div className="text-xl text-apt-800 text-center mb-6">{toast.message?.replace(/^Parabéns\s*/i, '')}</div>
+              <button
+                className="bg-apt-800 text-apt-100 px-6 py-3 rounded text-lg font-bold hover:bg-apt-600"
+                onClick={() => navigate('/classificacao')}
+              >
+                Fechar
+              </button>
             </div>
           </div>
         )}
