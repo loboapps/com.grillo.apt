@@ -17,6 +17,19 @@ import ManageFinanceiro from './pages/manageetapa_financeiro'
 import './index.css'
 import { AuthProvider } from './contexts/AuthContext'
 
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('SW registrado com sucesso:', registration);
+      })
+      .catch((registrationError) => {
+        console.log('SW falhou ao registrar:', registrationError);
+      });
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AuthProvider>
