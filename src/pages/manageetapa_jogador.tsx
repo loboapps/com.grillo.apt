@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import Nav from '../components/Nav'
 import SubNav from '../components/SubNav'
 import Toast from '../components/Toast'
-import { useGuests } from '../hooks/useGuests'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { icons } from '../utils/icons'
@@ -17,11 +16,11 @@ const ManageJogador = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const etapaId = location.state?.etapaId
-  const { guests, addGuest, updateGuest, removeGuest } = useGuests()
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [confirmedGuests, setConfirmedGuests] = useState<string[]>([])
+  const [guests, setGuests] = useState<string[]>([]) // Local guest input state
 
   // Carrega jogadores e convidados
   const fetchPlayers = async () => {
@@ -97,6 +96,11 @@ const ManageJogador = () => {
       </div>
     </div>
   )
+
+  // Adicionar convidado (local)
+  const addGuest = () => setGuests(prev => [...prev, ''])
+  const updateGuest = (index: number, value: string) => setGuests(prev => prev.map((g, i) => i === index ? value : g))
+  const removeGuest = (index: number) => setGuests(prev => prev.filter((_, i) => i !== index))
 
   if (loading) {
     return (
