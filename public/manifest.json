@@ -12,10 +12,10 @@
   "categories": ["games", "entertainment", "productivity"],
   "shortcuts": [
     {
-      "name": "Novo Jogo",
-      "short_name": "Novo",
-      "description": "Iniciar um novo jogo de poker",
-      "url": "/novo-jogo",
+      "name": "Ver Classificação",
+      "short_name": "Ranking",
+      "description": "Ver classificação dos jogadores",
+      "url": "/",
       "icons": [
         {
           "src": "/icons/icon-192x192.png",
