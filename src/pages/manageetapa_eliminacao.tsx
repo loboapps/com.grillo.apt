@@ -135,7 +135,7 @@ const ManageEliminacao = () => {
         {/* Toast de parabéns centralizado */}
         {parabens && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
-            <div className="bg-apt-100 rounded-lg shadow-lg p-8 w-full max-w-md flex flex-col items-center">
+            <div className="bg-apt-100 rounded-lg shadow-lg p-8 w-full max-w-md flex flex-col items-center mx-[10px]">
               <div className="text-4xl font-extrabold text-apt-500 mb-2 text-center">Parabéns</div>
               <div className="text-xl text-apt-800 text-center mb-6">
                 {parabens.message?.replace(/^Parabéns\s*/i, '')}
