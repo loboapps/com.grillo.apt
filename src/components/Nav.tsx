@@ -303,6 +303,15 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                 </>
               )}
             </div>
+            {/* Link permanente para Login */}
+            <div className="mt-8">
+              <Link
+                to="/admin"
+                className="block py-2 text-apt-700 hover:text-apt-900 text-center font-semibold border-t border-apt-300"
+              >
+                Login
+              </Link>
+            </div>
           </div>
         </div>
       )}
