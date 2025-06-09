@@ -302,10 +302,10 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
               )}
             </div>
             {/* Link permanente para Login no bottom */}
-            <div className="p-4 border-t border-apt-300 mt-auto">
+            <div className="p-4 border-t border-apt-200 mt-auto">
               <Link
                 to="/admin"
-                className="block py-2 text-apt-700 hover:text-apt-900 text-center font-semibold"
+                className="block py-2 text-apt-100 hover:text-apt-900 text-center font-semibold"
               >
                 Login
               </Link>
