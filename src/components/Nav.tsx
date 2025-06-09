@@ -77,12 +77,10 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
         >
           {/* Sliding Menu */}
           <div 
-            className={`fixed inset-y-0 left-0 w-64 bg-apt-100 transform transition-transform duration-300 ease-in-out z-50 ${
-              isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-            }`}
+            className={`fixed inset-y-0 left-0 w-64 bg-apt-100 transform transition-transform duration-300 ease-in-out z-50 flex flex-col`}
             onClick={e => e.stopPropagation()}
           >
-            <div className="p-4 space-y-1">
+            <div className="p-4 space-y-1 flex-1 overflow-y-auto">
               {/* status: aguardando */}
               {navData?.status === 'aguardando' && (
                 <>
@@ -303,11 +301,11 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
                 </>
               )}
             </div>
-            {/* Link permanente para Login */}
-            <div className="mt-8">
+            {/* Link permanente para Login no bottom */}
+            <div className="p-4 border-t border-apt-300 mt-auto">
               <Link
                 to="/admin"
-                className="block py-2 text-apt-700 hover:text-apt-900 text-center font-semibold border-t border-apt-300"
+                className="block py-2 text-apt-700 hover:text-apt-900 text-center font-semibold"
               >
                 Login
               </Link>
