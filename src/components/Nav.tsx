@@ -15,7 +15,6 @@ interface NavProps {
 
 const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [expandedItem, setExpandedItem] = useState<string | null>(null)
   const { user } = useAuth()
   const [navData, setNavData] = useState<any>(null)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
@@ -25,7 +24,6 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
     const fetchNav = async () => {
       const { data, error } = await supabase.rpc('nav_load')
 
-      // Ajustado para lidar com o formato real dos dados
       let nav = null
       if (Array.isArray(data) && data.length > 0) {
         if (data[0]?.nav_load) {
@@ -49,10 +47,6 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
     }
     fetchNav()
   }, [onNavData])
-
-  const toggleSubMenu = (item: string) => {
-    setExpandedItem(expandedItem === item ? null : item)
-  }
 
   // Helper for admin-only
   const isAdmin = !!user
