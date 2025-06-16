@@ -20,6 +20,9 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const navigate = useNavigate()
 
+  // Extrair is_admin do navData
+  const isAdmin = navData?.is_admin === true
+
   useEffect(() => {
     const fetchNav = async () => {
       const { data, error } = await supabase.rpc('nav_load')
@@ -47,9 +50,6 @@ const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
     }
     fetchNav()
   }, [onNavData])
-
-  // Helper for admin-only
-  const isAdmin = !!user
 
   return (
     <>
