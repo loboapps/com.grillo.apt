@@ -15,7 +15,6 @@ interface NavProps {
 
 const Nav: React.FC<NavProps> = ({ title, onNavData }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { user } = useAuth()
   const [navData, setNavData] = useState<any>(null)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const navigate = useNavigate()
