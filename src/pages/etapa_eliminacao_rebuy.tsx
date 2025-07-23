@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Nav from '../components/Nav'
 
 const MAX_REBUYS = 2

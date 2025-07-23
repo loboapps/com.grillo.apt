@@ -18,6 +18,15 @@ export default {
           200: '#D3D3D3',
           100: '#F5F3F4',  // lightest
         }
+      },
+      keyframes: {
+        'bounce-in': {
+          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' }
+        }
+      },
+      animation: {
+        'bounce-in': 'bounce-in 0.3s ease-out'
       }
     },
   },

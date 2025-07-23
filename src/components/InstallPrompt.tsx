@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { X, Download, Share, Smartphone } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { X, Download, Share, Smartphone } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
   readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
+    outcome: "accepted" | "dismissed";
     platform: string;
   }>;
   prompt(): Promise<void>;
@@ -15,7 +15,8 @@ interface InstallPromptProps {
 }
 
 const InstallPrompt: React.FC<InstallPromptProps> = ({ onClose }) => {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isAndroid, setIsAndroid] = useState(false);
@@ -27,26 +28,30 @@ const InstallPrompt: React.FC<InstallPromptProps> = ({ onClose }) => {
     const userAgent = navigator.userAgent.toLowerCase();
     const isIOSDevice = /iphone|ipad|ipod/.test(userAgent);
     const isAndroidDevice = /android/.test(userAgent);
-    
+
     setIsIOS(isIOSDevice);
     setIsAndroid(isAndroidDevice);
 
     // Verificar se já foi instalado
-    const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
+    const isInStandaloneMode = window.matchMedia(
+      "(display-mode: standalone)"
+    ).matches;
     const isNavigatorStandalone = (window.navigator as any).standalone === true;
-    
+
     if (isInStandaloneMode || isNavigatorStandalone) {
       setIsInstalled(true);
       return;
     }
 
     // Verificar se usuário já dispensou
-    const dismissed = localStorage.getItem('apt-install-dismissed');
+    const dismissed = localStorage.getItem("apt-install-dismissed");
     if (dismissed) {
       const dismissedDate = new Date(dismissed);
       const now = new Date();
-      const daysSince = Math.floor((now.getTime() - dismissedDate.getTime()) / (1000 * 60 * 60 * 24));
-      
+      const daysSince = Math.floor(
+        (now.getTime() - dismissedDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
       // Mostrar novamente após 7 dias
       if (daysSince < 7) {
         setUserDismissed(true);
@@ -58,7 +63,7 @@ const InstallPrompt: React.FC<InstallPromptProps> = ({ onClose }) => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      
+
       // Mostrar prompt após alguns segundos de navegação
       setTimeout(() => {
         setShowPrompt(true);
@@ -67,13 +72,13 @@ const InstallPrompt: React.FC<InstallPromptProps> = ({ onClose }) => {
 
     // Listener para quando app é instalado
     const handleAppInstalled = () => {
-      console.log('PWA foi instalado');
+      console.log("PWA foi instalado");
       setShowPrompt(false);
       setDeferredPrompt(null);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
 
     // Para iOS, mostrar prompt após alguns segundos se não estiver instalado
     if (isIOSDevice && !isInStandaloneMode) {
@@ -83,8 +88,11 @@ const InstallPrompt: React.FC<InstallPromptProps> = ({ onClose }) => {
     }
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
+      window.removeEventListener("appinstalled", handleAppInstalled);
     };
   }, []);
 
@@ -93,15 +101,15 @@ const InstallPrompt: React.FC<InstallPromptProps> = ({ onClose }) => {
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     console.log(`Usuário ${outcome} a instalação`);
-    
+
     setDeferredPrompt(null);
     setShowPrompt(false);
   };
 
   const handleDismiss = () => {
-    localStorage.setItem('apt-install-dismissed', new Date().toISOString());
+    localStorage.setItem("apt-install-dismissed", new Date().toISOString());
     setShowPrompt(false);
     setUserDismissed(true);
     onClose?.();
@@ -110,7 +118,7 @@ const InstallPrompt: React.FC<InstallPromptProps> = ({ onClose }) => {
   const handleRemindLater = () => {
     const remindDate = new Date();
     remindDate.setDate(remindDate.getDate() + 3); // Lembrar em 3 dias
-    localStorage.setItem('apt-install-remind', remindDate.toISOString());
+    localStorage.setItem("apt-install-remind", remindDate.toISOString());
     setShowPrompt(false);
     onClose?.();
   };
@@ -122,7 +130,7 @@ const InstallPrompt: React.FC<InstallPromptProps> = ({ onClose }) => {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 max-w-sm mx-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 animate-slide-up">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center space-x-2">
@@ -228,23 +236,6 @@ const InstallPrompt: React.FC<InstallPromptProps> = ({ onClose }) => {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes slide-up {
-          from {
-            transform: translateY(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-        
-        .animate-slide-up {
-          animation: slide-up 0.3s ease-out;
-        }
-      `}</style>
     </div>
   );
 };

@@ -9,7 +9,7 @@ import { icons } from '../utils/icons'
 interface Player {
   id_jogador: string
   nome: string
-  status: 'pendente' | 'falta'
+  status: 'pendente' | 'falta' | 'presente'  // Adicione 'presente' aqui
 }
 
 const ManageJogador = () => {
